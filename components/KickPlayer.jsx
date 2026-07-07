@@ -319,8 +319,9 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
 
           <div className="relative z-10 flex flex-col items-center text-center max-w-md">
             <div className="mb-5 h-14 w-14 rounded-2xl bg-[#18181f] border border-white/[0.06] flex items-center justify-center shadow-xl">
-              <svg className="h-6 w-6 text-white/20" fill="none" viewBox="0 0 24 24" stroke="currentColor" strokeWidth="1.5">
-                <path strokeLinecap="round" strokeLinejoin="round" d="M15.75 10.5l4.72-4.72a.75.75 0 011.28.53v11.38a.75.75 0 01-1.28.53l-4.72-4.72M4.5 18.75h9a2.25 2.25 0 002.25-2.25v-9a2.25 2.25 0 00-2.25-2.25h-9A2.25 2.25 0 002.25 7.5v9a2.25 2.25 0 002.25 2.25z" />
+              {/* Kick logo */}
+              <svg className="h-7 w-7" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                <path d="M10 5H20V20H27.5L35 12.5H45L35 25L45 37.5H35L27.5 30H20V45H10V5Z" fill="#53FC18"/>
               </svg>
             </div>
 
