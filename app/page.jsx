@@ -127,7 +127,7 @@ export default function Home() {
   useEffect(() => {
     async function fetchChannel() {
       try {
-        const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
+        const r = await fetch(`https://kick.com/api/v2/channels/reda-3x?t=${Date.now()}`, { cache: "no-store" });
         if (r.ok) {
           const d = await r.json();
           const live = d.livestream !== null;
@@ -144,7 +144,7 @@ export default function Home() {
 
     async function fetchVideos() {
       try {
-        const r = await fetch("https://kick.com/api/v2/channels/reda-3x/videos");
+        const r = await fetch(`https://kick.com/api/v2/channels/reda-3x/videos?t=${Date.now()}`, { cache: "no-store" });
         if (r.ok) {
           const d = await r.json();
           if (Array.isArray(d)) {
