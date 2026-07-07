@@ -19,7 +19,7 @@ export default function Navbar() {
         <nav className="flex items-center gap-4">
           <a
             href="https://kick.com/reda-3x"
-            target="_self"
+            target="_blank"
             rel="noopener noreferrer"
             className="rounded-lg bg-red-500/10 px-3.5 py-1.5 text-xs font-semibold text-red-400 border border-red-500/20 hover:bg-red-500 hover:text-zinc-950 transition duration-300"
           >
@@ -29,7 +29,7 @@ export default function Navbar() {
           <a
             href="https://www.youtube.com/@reda-3x"
             className="text-xs font-medium text-zinc-400 hover:text-zinc-50 transition duration-200"
-            target="_self"
+            target="_blank"
             
           >
             YouTube
@@ -37,7 +37,8 @@ export default function Navbar() {
           <a
             href="https://discord.gg/T2Xx6fS8J"
             className="text-xs font-medium text-zinc-400 hover:text-zinc-50 transition duration-200"
-            target="_self"
+            target="_blank"
+          
           >
             Discord
           </a>
