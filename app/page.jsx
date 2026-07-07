@@ -79,6 +79,36 @@ export default function Home() {
     fetchData();
   }, []);
 
+  useEffect(() => {
+    const handleContextMenu = (e) => e.preventDefault();
+    document.addEventListener("contextmenu", handleContextMenu);
+
+    const handleKeyDown = (e) => {
+      if (e.key === "F12" || e.keyCode === 123) {
+        e.preventDefault();
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && (e.key === "I" || e.key === "i" || e.keyCode === 73)) {
+        e.preventDefault();
+        return false;
+      }
+      if (e.ctrlKey && e.shiftKey && (e.key === "J" || e.key === "j" || e.keyCode === 74)) {
+        e.preventDefault();
+        return false;
+      }
+      if (e.ctrlKey && (e.key === "U" || e.key === "u" || e.keyCode === 85)) {
+        e.preventDefault();
+        return false;
+      }
+    };
+    document.addEventListener("keydown", handleKeyDown);
+
+    return () => {
+      document.removeEventListener("contextmenu", handleContextMenu);
+      document.removeEventListener("keydown", handleKeyDown);
+    };
+  }, []);
+
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950">
       {/* Top Navbar */}
@@ -250,6 +280,20 @@ export default function Home() {
           </section>
         )}
       </main>
+
+      {/* Footer */}
+      <footer className="w-full border-t border-zinc-900 bg-zinc-950 py-6 mt-12">
+        <div className="max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 flex flex-col sm:flex-row items-center justify-between gap-4">
+          <p className="text-xs text-zinc-500 font-medium">
+            &copy; {new Date().getFullYear()} <span className="text-zinc-300 font-bold">1_bp</span>. All rights reserved.
+          </p>
+          <div className="flex items-center gap-1.5">
+            <span className="text-[10px] text-zinc-600 font-bold uppercase tracking-wider bg-zinc-900 border border-zinc-800 px-2 py-0.5 rounded">
+              Red-RP Stream Hub
+            </span>
+          </div>
+        </div>
+      </footer>
     </div>
   );
 }
