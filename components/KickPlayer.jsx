@@ -351,7 +351,7 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
                 href="https://discord.gg/T2Xx6fS8J"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-white/[0.05] border border-white/[0.08] text-white/50 text-[11px] font-semibold uppercase tracking-wide hover:bg-white/[0.09] hover:text-white/80 transition-all duration-200"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#5865F2] text-white text-[11px] font-bold uppercase tracking-wide hover:bg-[#6d78f5] transition-all duration-200 shadow-[0_0_14px_rgba(88,101,242,0.35)]"
               >
                 Join Discord
               </a>
