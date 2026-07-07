@@ -15,7 +15,7 @@ function formatTime(seconds) {
   return `${pad(mins)}:${pad(secs)}`;
 }
 
-export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVOD = () => {} }) {
+export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVOD = () => {}, profilePic = null }) {
   const videoRef = useRef(null);
   const containerRef = useRef(null);
   const hlsRef = useRef(null);
@@ -318,11 +318,20 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
           <div className="absolute inset-0 bg-[linear-gradient(to_right,rgba(255,255,255,0.025)_1px,transparent_1px),linear-gradient(to_bottom,rgba(255,255,255,0.025)_1px,transparent_1px)] bg-[size:32px_32px]" />
 
           <div className="relative z-10 flex flex-col items-center text-center max-w-md">
-            <div className="mb-5 h-14 w-14 rounded-2xl bg-[#18181f] border border-white/[0.06] flex items-center justify-center shadow-xl">
-              {/* Kick logo */}
-              <svg className="h-7 w-7" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
-                <path d="M10 5H20V20H27.5L35 12.5H45L35 25L45 37.5H35L27.5 30H20V45H10V5Z" fill="#53FC18"/>
-              </svg>
+            <div className="mb-5 h-16 w-16 rounded-full overflow-hidden border-2 border-[#53FC18]/40 shadow-[0_0_20px_rgba(83,252,24,0.2)] flex items-center justify-center bg-[#18181f]">
+              {profilePic ? (
+                // eslint-disable-next-line @next/next/no-img-element
+                <img
+                  src={profilePic}
+                  alt="Streamer profile"
+                  className="h-full w-full object-cover"
+                />
+              ) : (
+                /* Kick logo fallback */
+                <svg className="h-7 w-7" viewBox="0 0 50 50" fill="none" xmlns="http://www.w3.org/2000/svg">
+                  <path d="M10 5H20V20H27.5L35 12.5H45L35 25L45 37.5H35L27.5 30H20V45H10V5Z" fill="#53FC18"/>
+                </svg>
+              )}
             </div>
 
             <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 border border-red-600/20 text-red-400 text-[10px] font-semibold uppercase tracking-widest mb-4">

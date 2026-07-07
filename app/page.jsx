@@ -120,13 +120,18 @@ export default function Home() {
   const [lastStreams, setLastStreams] = useState([]);
   const [loading, setLoading]        = useState(true);
   const [activeVOD, setActiveVOD]    = useState(null);
+  const [profilePic, setProfilePic]  = useState(null);
 
   /* Fetch data */
   useEffect(() => {
     async function load() {
       try {
         const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
-        if (r.ok) { const d = await r.json(); setIsLive(d.livestream !== null); }
+        if (r.ok) {
+          const d = await r.json();
+          setIsLive(d.livestream !== null);
+          if (d.user?.profile_pic) setProfilePic(d.user.profile_pic);
+        }
       } catch { /* no-op */ }
       try {
         const r = await fetch("https://kick.com/api/v2/channels/reda-3x/videos");
@@ -187,7 +192,7 @@ export default function Home() {
             {loading ? (
               <div className="skeleton w-full rounded-2xl aspect-video" />
             ) : (
-              <KickPlayer isLive={isLive} activeVOD={activeVOD} onCloseVOD={() => setActiveVOD(null)} />
+              <KickPlayer isLive={isLive} activeVOD={activeVOD} onCloseVOD={() => setActiveVOD(null)} profilePic={profilePic} />
             )}
 
             {/* About card */}
