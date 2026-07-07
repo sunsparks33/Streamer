@@ -2,6 +2,8 @@ import Navbar from "@/components/Navbar";
 import KickPlayer from "@/components/KickPlayer";
 import KickChat from "@/components/KickChat";
 
+export const dynamic = "force-dynamic";
+
 function formatDuration(ms) {
   if (!ms) return "00:00:00";
   const totalSeconds = Math.floor(ms / 1000);
@@ -70,13 +72,19 @@ export default async function Home() {
   let lastStreams = fallbackStreams;
   try {
     const res = await fetch("https://kick.com/api/v2/channels/reda-3x/videos", {
-      next: { revalidate: 60 } // cache for 60 seconds
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+      },
+      next: { revalidate: 10 }
     });
     if (res.ok) {
       const data = await res.json();
       if (Array.isArray(data) && data.length > 0) {
         lastStreams = data;
       }
+    } else {
+      console.warn("Failed to fetch Kick VODs, status code:", res.status);
     }
   } catch (err) {
     console.error("Error fetching VODs:", err);
