@@ -142,6 +142,31 @@ export default function Home() {
     load();
   }, []);
 
+  /* Console watermark */
+  useEffect(() => {
+    const reset = "color: unset; background: unset; font-size: unset; padding: unset;";
+    console.log(
+      "%c\n" +
+      " ██╗    ██████╗ ██████╗ \n" +
+      " ██║    ██╔══██╗██╔══██╗\n" +
+      " ██║    ██████╔╝██████╔╝\n" +
+      " ██║    ██╔══██╗██╔═══╝ \n" +
+      " ██████╗██████╔╝██║     \n" +
+      " ╚═════╝╚═════╝ ╚═╝     \n",
+      "color: #53FC18; font-family: monospace; font-size: 13px; line-height: 1.3;"
+    );
+    console.log(
+      "%c  1_bp Stream Hub  %c © 2025 1_bp · All rights reserved  %c  kick.com/reda-3x  ",
+      "background: #53FC18; color: #000; font-weight: 900; font-size: 11px; padding: 4px 10px; border-radius: 4px 0 0 4px;",
+      "background: #111; color: #aaa; font-size: 11px; padding: 4px 10px;",
+      "background: #18181f; color: #53FC18; font-size: 11px; padding: 4px 10px; border-radius: 0 4px 4px 0;"
+    );
+    console.log(
+      "%c⚠  This website is protected. Unauthorized copying or reproduction is strictly prohibited.",
+      "color: #ef4444; font-size: 11px; padding: 2px 0;"
+    );
+  }, []);
+
   /* Security */
   useEffect(() => {
     const noop = (e) => e.preventDefault();
