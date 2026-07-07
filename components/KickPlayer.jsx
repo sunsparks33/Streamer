@@ -375,11 +375,12 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
     <div className="w-full overflow-hidden rounded-2xl border border-white/[0.06] shadow-2xl shadow-black/60">
       <div className="aspect-video w-full">
         <iframe
-          src="https://player.kick.com/reda-3x"
+          src="https://player.kick.com/reda-3x?muted=false&autoplay=true"
           className="h-full w-full"
           frameBorder="0"
           scrolling="no"
           allowFullScreen={true}
+          allow="autoplay; fullscreen"
         />
       </div>
     </div>
