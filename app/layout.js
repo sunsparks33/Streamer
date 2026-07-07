@@ -30,12 +30,6 @@ export const metadata = {
     locale: "en_US",
     type: "website",
   },
-  twitter: {
-    card: "summary_large_image",
-    title: "1_bp - Official Stream Hub",
-    description: "Watch 1_bp live on Kick.com, join the chat room, and view recent stream highlight VODs directly.",
-    images: ["https://1-bp-streamer-web.vercel.app/og-image.jpg"],
-  },
 };
 
 export default function RootLayout({ children }) {
