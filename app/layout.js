@@ -21,7 +21,7 @@ export const metadata = {
     siteName: "1_bp Streamer Hub",
     images: [
       {
-        url: "https://1-bp-streamer-web.vercel.app/og-image.png",
+        url: "https://1-bp-streamer-web.vercel.app/og-image.jpg",
         width: 1200,
         height: 630,
         alt: "1_bp Streamer Hub Banner",
@@ -34,7 +34,7 @@ export const metadata = {
     card: "summary_large_image",
     title: "1_bp - Official Stream Hub",
     description: "Watch 1_bp live on Kick.com, join the chat room, and view recent stream highlight VODs directly.",
-    images: ["https://1-bp-streamer-web.vercel.app/og-image.png"],
+    images: ["https://1-bp-streamer-web.vercel.app/og-image.jpg"],
   },
 };
 
