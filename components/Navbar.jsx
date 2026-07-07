@@ -1,13 +1,35 @@
-import React from "react";
+"use client";
+import React, { useEffect, useState } from "react";
 
 export default function Navbar() {
+  const [opacity, setOpacity] = useState(0.8);
+
+  useEffect(() => {
+    const handleScroll = () => {
+      // Fade from 0.8 → 0.08 over the first 300px of scroll
+      const scrollY = window.scrollY;
+      const maxScroll = 300;
+      const minOpacity = 0.08;
+      const maxOpacity = 0.8;
+      const newOpacity =
+        maxOpacity - (maxOpacity - minOpacity) * Math.min(scrollY / maxScroll, 1);
+      setOpacity(newOpacity);
+    };
+
+    window.addEventListener("scroll", handleScroll, { passive: true });
+    return () => window.removeEventListener("scroll", handleScroll);
+  }, []);
+
   return (
     <header className="sticky top-0 z-50 w-full">
       {/* Scroll Progress */}
       <div className="scroll-progress" />
 
       {/* Backdrop glass bar */}
-      <div className="relative border-b border-white/[0.05] bg-[#0a0a0f]/80 backdrop-blur-2xl">
+      <div
+        className="relative border-b border-white/[0.05] backdrop-blur-2xl transition-all duration-300"
+        style={{ backgroundColor: `rgba(10, 10, 15, ${opacity})` }}
+      >
         {/* Subtle top accent line */}
         <div className="absolute inset-x-0 top-0 h-px bg-gradient-to-r from-transparent via-rose-700/60 to-transparent" />
 
