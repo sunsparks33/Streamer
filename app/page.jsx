@@ -2,6 +2,27 @@ import Navbar from "@/components/Navbar";
 import KickPlayer from "@/components/KickPlayer";
 import KickChat from "@/components/KickChat";
 
+const lastStreams = [
+  {
+    title: "RED-RP | Darija MTA: Lkhdma M3a Lkhout & Ganging Up #45",
+    duration: "04:12:45",
+    views: "1.8K views",
+    date: "Yesterday",
+  },
+  {
+    title: "RED-RP | MTA Morocco: T7ramiyat & Police Chases #44",
+    duration: "03:52:10",
+    views: "2.4K views",
+    date: "3 days ago",
+  },
+  {
+    title: "RED-RP | Server Launch Event & Custom Car Reveal #43",
+    duration: "05:15:30",
+    views: "3.1K views",
+    date: "1 week ago",
+  },
+];
+
 export default function Home() {
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950">
@@ -60,6 +81,63 @@ export default function Home() {
           </div>
 
         </div>
+
+        {/* Last Livestreams Section */}
+        <section className="mt-12 border-t border-zinc-800/80 pt-10 pb-6">
+          <div className="flex items-center justify-between mb-6">
+            <div className="flex items-center gap-2.5">
+              <span className="w-2.5 h-2.5 rounded-full bg-red-600 animate-pulse"></span>
+              <h2 className="text-xl md:text-2xl font-black tracking-tight text-zinc-100 uppercase">
+                Last Livestreams
+              </h2>
+            </div>
+            <span className="text-xs font-semibold text-zinc-500 uppercase tracking-wider">
+              {lastStreams.length} Videos Available
+            </span>
+          </div>
+
+          <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
+            {lastStreams.map((vod, idx) => (
+              <div key={idx} className="group cursor-pointer overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40 transition-all duration-300 hover:-translate-y-1.5 hover:border-red-500/30 hover:shadow-[0_10px_30px_-10px_rgba(239,68,68,0.2)]">
+                {/* Thumbnail Container */}
+                <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center">
+                  {/* Grid pattern background */}
+                  <div className="absolute inset-0 bg-[linear-gradient(to_right,#80808012_1px,transparent_1px),linear-gradient(to_bottom,#80808012_1px,transparent_1px)] bg-[size:24px_24px] [mask-image:radial-gradient(ellipse_60%_50%_at_50%_0%,#000_70%,transparent_100%)] opacity-30 group-hover:opacity-50 transition-opacity" />
+                  <div className="absolute inset-0 bg-gradient-to-t from-zinc-950 via-transparent to-transparent opacity-80" />
+                  
+                  {/* Pulsing Play icon */}
+                  <div className="z-10 flex h-12 w-12 items-center justify-center rounded-full bg-red-600/10 border border-red-500/30 text-red-500 shadow-[0_0_15px_rgba(239,68,68,0.1)] transition-all duration-300 group-hover:scale-110 group-hover:bg-red-600 group-hover:text-zinc-950 group-hover:shadow-[0_0_20px_rgba(239,68,68,0.4)]">
+                    <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                      <path d="M8 5v14l11-7z" />
+                    </svg>
+                  </div>
+
+                  {/* Duration Badge */}
+                  <span className="absolute bottom-3 right-3 rounded bg-zinc-950/80 px-2 py-0.5 text-[10px] font-bold text-zinc-300 tracking-wider">
+                    {vod.duration}
+                  </span>
+                  
+                  {/* Video Type Badge */}
+                  <span className="absolute top-3 left-3 rounded bg-red-600/10 border border-red-500/20 px-2 py-0.5 text-[10px] font-bold text-red-400 uppercase tracking-wide">
+                    VOD
+                  </span>
+                </div>
+
+                {/* Info Segment */}
+                <div className="p-4">
+                  <h3 className="line-clamp-2 text-sm font-bold text-zinc-100 group-hover:text-red-500 transition-colors leading-snug">
+                    {vod.title}
+                  </h3>
+                  <div className="mt-3 flex items-center justify-between text-xs text-zinc-500 font-medium">
+                    <span>{vod.views}</span>
+                    <span>•</span>
+                    <span>{vod.date}</span>
+                  </div>
+                </div>
+              </div>
+            ))}
+          </div>
+        </section>
       </main>
     </div>
   );
