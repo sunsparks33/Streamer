@@ -325,8 +325,8 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
               </svg>
             </div>
 
-            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] border border-white/[0.07] text-white/25 text-[10px] font-semibold uppercase tracking-widest mb-4">
-              <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
+            <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 border border-red-600/20 text-red-400 text-[10px] font-semibold uppercase tracking-widest mb-4">
+              <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
               Stream Offline
             </span>
 

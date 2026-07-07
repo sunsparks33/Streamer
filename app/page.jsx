@@ -38,17 +38,17 @@ function StatusBadge({ loading, isLive }) {
     <span className="skeleton inline-flex items-center gap-1.5 px-2.5 py-1 rounded-full text-xs font-semibold text-transparent w-20 h-6" />
   );
   if (isLive) return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-rose-600/15 text-rose-400 text-[11px] font-bold uppercase tracking-widest border border-rose-600/25 animate-glow-pulse">
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-[#53FC18]/10 text-[#53FC18] text-[11px] font-bold uppercase tracking-widest border border-[#53FC18]/25 animate-glow-pulse">
       <span className="relative flex h-1.5 w-1.5">
-        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-rose-400 opacity-75" />
-        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-rose-500" />
+        <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-[#53FC18] opacity-75" />
+        <span className="relative inline-flex rounded-full h-1.5 w-1.5 bg-[#53FC18]" />
       </span>
       Live
     </span>
   );
   return (
-    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-white/[0.04] text-white/30 text-[11px] font-semibold uppercase tracking-widest border border-white/[0.07]">
-      <span className="h-1.5 w-1.5 rounded-full bg-white/20" />
+    <span className="inline-flex items-center gap-1.5 px-3 py-1 rounded-full bg-red-600/10 text-red-400 text-[11px] font-semibold uppercase tracking-widest border border-red-600/20">
+      <span className="h-1.5 w-1.5 rounded-full bg-red-500" />
       Offline
     </span>
   );
