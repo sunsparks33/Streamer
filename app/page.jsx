@@ -2,7 +2,26 @@ import Navbar from "@/components/Navbar";
 import KickPlayer from "@/components/KickPlayer";
 import KickChat from "@/components/KickChat";
 
-export default function Home() {
+export const dynamic = "force-dynamic";
+
+export default async function Home() {
+  let isLive = false;
+  try {
+    const res = await fetch("https://kick.com/api/v2/channels/reda-3x", {
+      headers: {
+        "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/120.0.0.0 Safari/537.36",
+        "Accept": "application/json",
+      },
+      next: { revalidate: 10 }
+    });
+    if (res.ok) {
+      const data = await res.json();
+      isLive = data.livestream !== null;
+    }
+  } catch (err) {
+    console.error("Error checking stream status:", err);
+  }
+
   return (
     <div className="flex flex-col min-h-screen bg-zinc-950">
       {/* Top Navbar */}
@@ -19,13 +38,19 @@ export default function Home() {
             <div className="flex flex-wrap items-center justify-between gap-3 bg-zinc-900/40 border border-zinc-800/80 rounded-xl p-4">
               <div className="flex items-center gap-3">
                 {/* Blinking Live Badge */}
-                <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/10 text-red-500 text-xs font-black uppercase tracking-wider border border-red-500/20">
-                  <span className="relative flex h-2 w-2">
-                    <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
-                    <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                {isLive ? (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-red-500/10 text-red-500 text-xs font-black uppercase tracking-wider border border-red-500/20">
+                    <span className="relative flex h-2 w-2">
+                      <span className="animate-ping absolute inline-flex h-full w-full rounded-full bg-red-400 opacity-75"></span>
+                      <span className="relative inline-flex rounded-full h-2 w-2 bg-red-500"></span>
+                    </span>
+                    LIVE
                   </span>
-                  LIVE
-                </span>
+                ) : (
+                  <span className="inline-flex items-center gap-1.5 px-2.5 py-1 rounded-md bg-zinc-805/10 text-zinc-400 text-xs font-black uppercase tracking-wider border border-zinc-800">
+                    OFFLINE
+                  </span>
+                )}
                 <div>
                   <h1 className="text-lg md:text-xl font-bold tracking-tight text-zinc-100">
                     {"1_bp's Broadcast Room"}
@@ -36,14 +61,20 @@ export default function Home() {
               
               <div className="flex items-center gap-2">
                 <span className="text-xs text-zinc-400">Status:</span>
-                <span className="text-xs font-semibold text-red-400 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20">
-                  Online
-                </span>
+                {isLive ? (
+                  <span className="text-xs font-semibold text-red-400 px-2 py-0.5 rounded-full bg-red-500/10 border border-red-500/20">
+                    Online
+                  </span>
+                ) : (
+                  <span className="text-xs font-semibold text-zinc-500 px-2 py-0.5 rounded-full bg-zinc-905/10 border border-zinc-800">
+                    Offline
+                  </span>
+                )}
               </div>
             </div>
 
             {/* Stream Player */}
-            <KickPlayer />
+            <KickPlayer isLive={isLive} />
 
             {/* Stream Description Info */}
             <div className="p-5 rounded-xl bg-zinc-900/30 border border-zinc-800/80">
