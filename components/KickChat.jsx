@@ -23,7 +23,7 @@ export default function KickChat() {
       {/* Chat iframe */}
       <div className="h-[480px] lg:h-[calc(100vh-148px)]">
         <iframe
-          src="https://kick.com/embed/chat/reda-3x"
+          src="https://chat.kick.cx/embed/reda-3x"
           className="w-full h-full"
           frameBorder="0"
           scrolling="no"
