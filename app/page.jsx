@@ -121,6 +121,7 @@ export default function Home() {
   const [loading, setLoading]        = useState(true);
   const [activeVOD, setActiveVOD]    = useState(null);
   const [profilePic, setProfilePic]  = useState(null);
+  const [viewerCount, setViewerCount] = useState(0);
 
   /* Fetch data */
   useEffect(() => {
@@ -131,6 +132,7 @@ export default function Home() {
           const d = await r.json();
           setIsLive(d.livestream !== null);
           if (d.user?.profile_pic) setProfilePic(d.user.profile_pic);
+          if (d.livestream?.viewer_count != null) setViewerCount(d.livestream.viewer_count);
         }
       } catch { /* no-op */ }
       try {
@@ -147,7 +149,10 @@ export default function Home() {
         const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
         if (r.ok) {
           const d = await r.json();
-          setIsLive(d.livestream !== null);
+          const live = d.livestream !== null;
+          setIsLive(live);
+          if (live && d.livestream?.viewer_count != null) setViewerCount(d.livestream.viewer_count);
+          if (!live) setViewerCount(0);
         }
       } catch { /* no-op */ }
     }, 30000);
@@ -210,13 +215,24 @@ export default function Home() {
               <p className="text-[11px] text-white/30 font-medium">Streaming live on Kick.com</p>
             </div>
           </div>
-          <div className="flex items-center gap-2 text-[11px] text-white/30">
+          <div className="flex items-center gap-3 text-[11px] text-white/30">
+            {/* Viewer count — only when live */}
+            {isLive && !loading && (
+              <div className="flex items-center gap-1.5 px-2.5 py-1 rounded-full bg-[#53FC18]/10 border border-[#53FC18]/20">
+                <svg className="h-3 w-3 text-[#53FC18]" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+                  <path d="M15 12a3 3 0 11-6 0 3 3 0 016 0z"/>
+                  <path d="M2.458 12C3.732 7.943 7.523 5 12 5c4.478 0 8.268 2.943 9.542 7-1.274 4.057-5.064 7-9.542 7-4.477 0-8.268-2.943-9.542-7z"/>
+                </svg>
+                <span className="font-bold text-[#53FC18] tabular-nums">{viewerCount.toLocaleString()}</span>
+                <span className="text-[#53FC18]/60 text-[10px]">watching</span>
+              </div>
+            )}
             <span>Status</span>
             <span className="text-white/10">/</span>
             {loading
               ? <span className="skeleton h-4 w-12 rounded" />
               : isLive
-                ? <span className="font-semibold text-rose-400">Online</span>
+                ? <span className="font-semibold text-[#53FC18]">Online</span>
                 : <span className="font-semibold text-white/25">Offline</span>
             }
           </div>
