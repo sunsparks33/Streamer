@@ -140,6 +140,19 @@ export default function Home() {
       setLoading(false);
     }
     load();
+
+    // Poll live status every 30s — auto-detects when stream starts/ends
+    const pollInterval = setInterval(async () => {
+      try {
+        const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
+        if (r.ok) {
+          const d = await r.json();
+          setIsLive(d.livestream !== null);
+        }
+      } catch { /* no-op */ }
+    }, 30000);
+
+    return () => clearInterval(pollInterval);
   }, []);
 
   /* Console watermark */
