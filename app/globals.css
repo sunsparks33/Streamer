@@ -1,78 +1,127 @@
 @import "tailwindcss";
+@import url("https://fonts.googleapis.com/css2?family=Inter:wght@300;400;500;600;700;800;900&family=JetBrains+Mono:wght@400;600&display=swap");
 
+/* ─── Design Tokens ─────────────────────────────────────────────────── */
 @theme {
-  --color-primary-red: #ef4444;
+  --color-brand:        #e11d48;
+  --color-brand-dim:    #9f1239;
+  --color-brand-glow:   rgba(225, 29, 72, 0.18);
+  --color-surface:      #0a0a0f;
+  --color-surface-1:    #111118;
+  --color-surface-2:    #18181f;
+  --color-surface-3:    #1e1e27;
+  --color-border:       rgba(255,255,255,0.06);
+  --color-border-hover: rgba(225,29,72,0.30);
+  --color-text-1:       #f8f8fc;
+  --color-text-2:       #a1a1b5;
+  --color-text-3:       #52526a;
+  --font-sans:          "Inter", system-ui, sans-serif;
+  --font-mono:          "JetBrains Mono", monospace;
+}
+
+/* ─── Base ──────────────────────────────────────────────────────────── */
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+
+html {
+  scroll-behavior: smooth;
 }
 
 body {
-  @apply bg-zinc-950 text-zinc-50 antialiased;
+  font-family: var(--font-sans);
+  background-color: var(--color-surface);
+  color: var(--color-text-1);
+  -webkit-font-smoothing: antialiased;
+  -moz-osx-font-smoothing: grayscale;
   user-select: none;
   -webkit-user-select: none;
   -moz-user-select: none;
   -ms-user-select: none;
+  /* subtle noise texture */
+  background-image: url("data:image/svg+xml,%3Csvg viewBox='0 0 256 256' xmlns='http://www.w3.org/2000/svg'%3E%3Cfilter id='noise'%3E%3CfeTurbulence type='fractalNoise' baseFrequency='0.9' numOctaves='4' stitchTiles='stitch'/%3E%3C/filter%3E%3Crect width='100%25' height='100%25' filter='url(%23noise)' opacity='0.025'/%3E%3C/svg%3E");
 }
 
-/* Custom WebKit Scrollbar Styling */
-::-webkit-scrollbar {
-  width: 8px;
-  height: 8px;
-}
-
-::-webkit-scrollbar-track {
-  background: #09090b; /* zinc-950 */
-}
-
-::-webkit-scrollbar-thumb {
-  background: #7f1d1d; /* red-950 */
-  border: 1px solid #dc2626; /* red-600 */
+/* ─── Scrollbar ─────────────────────────────────────────────────────── */
+::-webkit-scrollbar        { width: 5px; height: 5px; }
+::-webkit-scrollbar-track  { background: var(--color-surface); }
+::-webkit-scrollbar-thumb  {
+  background: var(--color-brand-dim);
   border-radius: 9999px;
-  transition: background 0.3s ease;
 }
+::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
 
-::-webkit-scrollbar-thumb:hover {
-  background: #dc2626; /* red-600 */
-}
-
-/* Pure CSS Scroll Progress Bar Animation */
+/* ─── Scroll Progress Bar ───────────────────────────────────────────── */
 @keyframes grow-progress {
-  from {
-    transform: scaleX(0);
-  }
-  to {
-    transform: scaleX(1);
-  }
+  from { transform: scaleX(0); }
+  to   { transform: scaleX(1); }
 }
 
 .scroll-progress {
   position: fixed;
-  top: 0;
-  left: 0;
-  width: 100%;
-  height: 3px;
-  background: linear-gradient(90deg, #b91c1c, #ef4444, #f87171);
+  inset: 0 0 auto 0;
+  height: 2px;
+  background: linear-gradient(90deg, var(--color-brand-dim), var(--color-brand), #fb7185);
   transform-origin: 0 50%;
   animation: grow-progress auto linear;
   animation-timeline: scroll();
-  z-index: 100;
-  box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
+  z-index: 9999;
+  box-shadow: 0 0 12px rgba(225, 29, 72, 0.7);
 }
 
-/* Mouse Scroll Wheel Animation */
+/* ─── Mouse Scroll Indicator ────────────────────────────────────────── */
 @keyframes scroll-wheel {
-  0% {
-    transform: translateY(0);
-    opacity: 1;
-  }
-  50% {
-    transform: translateY(4px);
-    opacity: 0.6;
-  }
-  100% {
-    transform: translateY(10px);
-    opacity: 0;
-  }
+  0%   { transform: translateY(0);    opacity: 1;   }
+  60%  { transform: translateY(5px);  opacity: 0.5; }
+  100% { transform: translateY(12px); opacity: 0;   }
+}
+.animate-scroll-wheel { animation: scroll-wheel 1.8s infinite cubic-bezier(.4,0,.2,1); }
+
+/* ─── Glow Pulse ────────────────────────────────────────────────────── */
+@keyframes glow-pulse {
+  0%, 100% { box-shadow: 0 0 0 0 rgba(225, 29, 72, 0); }
+  50%       { box-shadow: 0 0 20px 4px rgba(225, 29, 72, 0.25); }
+}
+.animate-glow-pulse { animation: glow-pulse 2.5s infinite ease-in-out; }
+
+/* ─── Fade-in-up ────────────────────────────────────────────────────── */
+@keyframes fade-in-up {
+  from { opacity: 0; transform: translateY(16px); }
+  to   { opacity: 1; transform: translateY(0);    }
+}
+.animate-fade-in-up { animation: fade-in-up 0.55s ease both; }
+
+/* ─── Shimmer skeleton ──────────────────────────────────────────────── */
+@keyframes shimmer {
+  0%   { background-position: -400px 0; }
+  100% { background-position:  400px 0; }
+}
+.skeleton {
+  background: linear-gradient(90deg,
+    var(--color-surface-2) 25%,
+    var(--color-surface-3) 50%,
+    var(--color-surface-2) 75%
+  );
+  background-size: 800px 100%;
+  animation: shimmer 1.6s infinite linear;
 }
 
-.animate-scroll-wheel {
-  animation: scroll-wheel 1.6s infinite ease-in-out;
+/* ─── Glassmorphism card ─────────────────────────────────────────────── */
+.glass {
+  background: rgba(24, 24, 31, 0.65);
+  backdrop-filter: blur(20px) saturate(1.4);
+  -webkit-backdrop-filter: blur(20px) saturate(1.4);
+  border: 1px solid var(--color-border);
+}
+
+/* ─── VOD card hover glow ───────────────────────────────────────────── */
+.vod-card:hover {
+  border-color: var(--color-border-hover) !important;
+  box-shadow:
+    0 0 0 1px rgba(225,29,72,0.12),
+    0 20px 40px -12px rgba(225,29,72,0.18),
+    0 4px 16px -4px rgba(0,0,0,0.6);
+  transform: translateY(-4px);
 }
