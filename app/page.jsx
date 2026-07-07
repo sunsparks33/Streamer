@@ -200,19 +200,19 @@ export default function Home() {
                 Welcome! Dive into top-tier gameplay, live developer sessions, or casual hangout streams.
                 Make sure to check out the chat on the right and drop a follow!
               </p>
-
-              {/* Scroll indicator */}
-              {!loading && lastStreams.length > 0 && !activeVOD && (
-                <div className="flex flex-col items-center justify-center pt-8 pb-1">
-                  <div className="w-5 h-8 border border-rose-600/50 rounded-full flex justify-center pt-1.5">
-                    <div className="w-0.5 h-2 bg-rose-500 rounded-full animate-scroll-wheel" />
-                  </div>
-                  <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-rose-600/60 mt-2">
-                    Scroll to explore
-                  </span>
-                </div>
-              )}
             </div>
+
+            {/* Scroll indicator — outside the About card */}
+            {!loading && lastStreams.length > 0 && !activeVOD && (
+              <div className="flex flex-col items-center justify-center py-4">
+                <div className="w-5 h-8 border border-rose-600/50 rounded-full flex justify-center pt-1.5">
+                  <div className="w-0.5 h-2 bg-rose-500 rounded-full animate-scroll-wheel" />
+                </div>
+                <span className="text-[9px] uppercase font-bold tracking-[0.2em] text-rose-600/60 mt-2">
+                  Scroll to explore
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Chat column */}
