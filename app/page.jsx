@@ -125,36 +125,46 @@ export default function Home() {
 
   /* Fetch data */
   useEffect(() => {
-    async function load() {
-      try {
-        const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
-        if (r.ok) {
-          const d = await r.json();
-          setIsLive(d.livestream !== null);
-          if (d.user?.profile_pic) setProfilePic(d.user.profile_pic);
-          if (d.livestream?.viewer_count != null) setViewerCount(d.livestream.viewer_count);
-        }
-      } catch { /* no-op */ }
-      try {
-        const r = await fetch("https://kick.com/api/v2/channels/reda-3x/videos");
-        if (r.ok) { const d = await r.json(); if (Array.isArray(d)) setLastStreams(d.slice(0, 3)); }
-      } catch { /* no-op */ }
-      setLoading(false);
-    }
-    load();
-
-    // Poll live status every 30s — auto-detects when stream starts/ends
-    const pollInterval = setInterval(async () => {
+    async function fetchChannel() {
       try {
         const r = await fetch("https://kick.com/api/v2/channels/reda-3x");
         if (r.ok) {
           const d = await r.json();
           const live = d.livestream !== null;
           setIsLive(live);
-          if (live && d.livestream?.viewer_count != null) setViewerCount(d.livestream.viewer_count);
-          if (!live) setViewerCount(0);
+          if (d.user?.profile_pic) setProfilePic(d.user.profile_pic);
+          if (live && d.livestream?.viewer_count != null) {
+            setViewerCount(d.livestream.viewer_count);
+          } else {
+            setViewerCount(0);
+          }
         }
       } catch { /* no-op */ }
+    }
+
+    async function fetchVideos() {
+      try {
+        const r = await fetch("https://kick.com/api/v2/channels/reda-3x/videos");
+        if (r.ok) {
+          const d = await r.json();
+          if (Array.isArray(d)) {
+            setLastStreams(d.slice(0, 3));
+          }
+        }
+      } catch { /* no-op */ }
+    }
+
+    async function load() {
+      await Promise.all([fetchChannel(), fetchVideos()]);
+      setLoading(false);
+    }
+    
+    load();
+
+    // Poll live status & VODs list every 30s to auto-detect updates
+    const pollInterval = setInterval(async () => {
+      await fetchChannel();
+      await fetchVideos();
     }, 30000);
 
     return () => clearInterval(pollInterval);
