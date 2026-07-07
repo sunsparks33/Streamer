@@ -25,12 +25,7 @@ export default function Navbar() {
           >
             Kick
           </a>
-          <a
-            href="#"
-            className="text-xs font-medium text-zinc-400 hover:text-zinc-50 transition duration-200"
-          >
-            Twitter
-          </a>
+
           <a
             href="#"
             className="text-xs font-medium text-zinc-400 hover:text-zinc-50 transition duration-200"
