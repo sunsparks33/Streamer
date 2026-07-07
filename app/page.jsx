@@ -45,6 +45,7 @@ export default function Home() {
   const [isLive, setIsLive] = useState(false);
   const [lastStreams, setLastStreams] = useState([]);
   const [loading, setLoading] = useState(true);
+  const [activeVOD, setActiveVOD] = useState(null);
 
   useEffect(() => {
     async function fetchData() {
@@ -148,7 +149,7 @@ export default function Home() {
                 </div>
               </div>
             ) : (
-              <KickPlayer isLive={isLive} />
+              <KickPlayer isLive={isLive} activeVOD={activeVOD} onCloseVOD={() => setActiveVOD(null)} />
             )}
 
             {/* Stream Description Info */}
@@ -184,7 +185,6 @@ export default function Home() {
 
             <div className="grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 gap-6">
               {lastStreams.map((vod, idx) => {
-                const vodUrl = vod.video?.uuid ? `https://kick.com/video/${vod.video.uuid}` : `https://kick.com/reda-3x/videos`;
                 const vodTitle = vod.session_title || vod.title;
                 const vodViews = typeof vod.views === 'number' ? `${vod.views.toLocaleString()} views` : (vod.views || "0 views");
                 const vodDuration = typeof vod.duration === 'number' ? formatDuration(vod.duration) : (vod.duration || "00:00:00");
@@ -192,12 +192,13 @@ export default function Home() {
                 const vodThumb = vod.thumbnail?.src || vod.thumbnail || null;
 
                 return (
-                  <a 
+                  <button 
                     key={idx} 
-                    href={vodUrl}
-                    target="_blank"
-                    rel="noopener noreferrer"
-                    className="group cursor-pointer overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40 transition-all duration-300 hover:-translate-y-1.5 hover:border-red-500/30 hover:shadow-[0_10px_30px_-10px_rgba(239,68,68,0.2)]"
+                    onClick={() => {
+                      setActiveVOD(vod);
+                      window.scrollTo({ top: 0, behavior: "smooth" });
+                    }}
+                    className="w-full text-left group cursor-pointer overflow-hidden rounded-xl border border-zinc-800/80 bg-zinc-900/40 transition-all duration-300 hover:-translate-y-1.5 hover:border-red-500/30 hover:shadow-[0_10px_30px_-10px_rgba(239,68,68,0.2)]"
                   >
                     {/* Thumbnail Container */}
                     <div className="relative aspect-video w-full overflow-hidden bg-gradient-to-br from-zinc-900 to-zinc-950 flex items-center justify-center">
@@ -242,7 +243,7 @@ export default function Home() {
                         <span>{vodDate}</span>
                       </div>
                     </div>
-                  </a>
+                  </button>
                 );
               })}
             </div>
