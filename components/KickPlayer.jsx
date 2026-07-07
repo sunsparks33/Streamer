@@ -342,7 +342,7 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
                 href="https://kick.com/reda-3x"
                 target="_blank"
                 rel="noopener noreferrer"
-                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-rose-600 text-white text-[11px] font-bold uppercase tracking-wide hover:bg-rose-500 transition-all duration-200 shadow-[0_0_16px_rgba(225,29,72,0.3)]"
+                className="inline-flex items-center gap-1.5 px-4 py-2 rounded-xl bg-[#53FC18] text-black text-[11px] font-bold uppercase tracking-wide hover:bg-[#6dff35] transition-all duration-200 shadow-[0_0_16px_rgba(83,252,24,0.3)]"
               >
                 Visit Kick
               </a>
