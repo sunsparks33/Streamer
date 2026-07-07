@@ -56,3 +56,23 @@ body {
   z-index: 100;
   box-shadow: 0 0 8px rgba(239, 68, 68, 0.6);
 }
+
+/* Mouse Scroll Wheel Animation */
+@keyframes scroll-wheel {
+  0% {
+    transform: translateY(0);
+    opacity: 1;
+  }
+  50% {
+    transform: translateY(4px);
+    opacity: 0.6;
+  }
+  100% {
+    transform: translateY(10px);
+    opacity: 0;
+  }
+}
+
+.animate-scroll-wheel {
+  animation: scroll-wheel 1.6s infinite ease-in-out;
+}

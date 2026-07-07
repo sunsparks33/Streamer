@@ -189,6 +189,18 @@ export default function Home() {
                 Welcome! Dive into top-tier gameplay, live developer sessions, or casual hangout streams. Make sure to check out the chat on the right and drop a follow!
               </p>
             </div>
+
+            {/* Scroll Indicator */}
+            {!loading && lastStreams.length > 0 && !activeVOD && (
+              <div className="flex flex-col items-center justify-center pt-8 pb-2">
+                <div className="w-5 h-8 border-2 border-red-600 rounded-full flex justify-center p-1">
+                  <div className="w-1 h-2 bg-red-500 rounded-full animate-scroll-wheel"></div>
+                </div>
+                <span className="text-[9px] uppercase font-extrabold tracking-widest text-red-500 mt-2.5">
+                  Scroll to explore
+                </span>
+              </div>
+            )}
           </div>
 
           {/* Right Column: Chatbox (25% on Desktop) */}
