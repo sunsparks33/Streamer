@@ -4,6 +4,7 @@ import React, { useState, useEffect } from "react";
 import Navbar from "@/components/Navbar";
 import KickPlayer from "@/components/KickPlayer";
 import KickChat from "@/components/KickChat";
+import FollowersSection from "@/components/FollowersSection";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -122,6 +123,8 @@ export default function Home() {
   const [activeVOD, setActiveVOD]    = useState(null);
   const [profilePic, setProfilePic]  = useState(null);
   const [viewerCount, setViewerCount] = useState(0);
+  const [followersCount, setFollowersCount] = useState(0);
+  const [hasFollowed, setHasFollowed] = useState(false);
 
   /* Fetch data */
   useEffect(() => {
@@ -133,6 +136,7 @@ export default function Home() {
           const live = d.livestream !== null;
           setIsLive(live);
           if (d.user?.profile_pic) setProfilePic(d.user.profile_pic);
+          if (d.followers_count != null) setFollowersCount(d.followers_count);
           if (live && d.livestream?.viewer_count != null) {
             setViewerCount(d.livestream.viewer_count);
           } else {
@@ -208,6 +212,13 @@ export default function Home() {
     return () => { document.removeEventListener("contextmenu", noop); document.removeEventListener("keydown", key); };
   }, []);
 
+  const handleFollowClick = () => {
+    if (!hasFollowed) {
+      setFollowersCount(prev => prev + 1);
+      setHasFollowed(true);
+    }
+  };
+
   const handlePlayVOD = (vod) => { setActiveVOD(vod); window.scrollTo({ top: 0, behavior: "smooth" }); };
 
   return (
@@ -258,6 +269,14 @@ export default function Home() {
             ) : (
               <KickPlayer isLive={isLive} activeVOD={activeVOD} onCloseVOD={() => setActiveVOD(null)} profilePic={profilePic} />
             )}
+
+            {/* Followers Section */}
+            <FollowersSection
+              loading={loading}
+              followersCount={followersCount}
+              onFollowClick={handleFollowClick}
+              hasFollowed={hasFollowed}
+            />
 
             {/* About card */}
             <div className="glass rounded-2xl p-5">
