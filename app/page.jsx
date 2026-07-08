@@ -10,6 +10,7 @@ import LiveAlerts from "@/components/LiveAlerts";
 import StreamGoals from "@/components/StreamGoals";
 import SetupSpecs from "@/components/SetupSpecs";
 import StreamMusic from "@/components/StreamMusic";
+import DiscordWidget from "@/components/DiscordWidget";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -357,6 +358,9 @@ export default function Home() {
               hasFollowed={hasFollowed}
               onFollowerIncrement={() => setFollowersCount(prev => prev + 1)}
             />
+
+            {/* Discord Community Widget */}
+            <DiscordWidget serverId="1084146853702008872" inviteUrl="https://discord.gg/T2Xx6fS8J" />
 
             {/* About card */}
             <div className="glass rounded-2xl p-5">
