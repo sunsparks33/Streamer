@@ -6,19 +6,20 @@ const specsData = [
   {
     category: "Gaming PC",
     items: [
-      { name: "CPU", val: "AMD Ryzen 7 7800X3D (4.2GHz to 5.0GHz)", desc: "Best Gaming Processor", icon: "cpu" },
-      { name: "GPU", val: "NVIDIA GeForce RTX 4090 24GB GDDR6X", desc: "Ultimate 4K Powerhouse", icon: "gpu" },
-      { name: "RAM", val: "32GB Corsair Vengeance DDR5 6000MHz", desc: "Ultra-Low Latency Memory", icon: "ram" },
-      { name: "Storage", val: "2TB Samsung 990 Pro NVMe SSD", desc: "7450 MB/s Read Speed", icon: "storage" }
+      { name: "CPU", val: "AMD Ryzen 5 3500X", desc: "6 Cores / 6 Threads", icon: "cpu" },
+      { name: "GPU", val: "AMD Radeon RX 580 8GB", desc: "Reliable Graphics Engine", icon: "gpu" },
+      { name: "RAM", val: "32GB DDR4 3200MHz CL16", desc: "Dual Channel High-Speed", icon: "ram" },
+      { name: "Storage", val: "256GB SSD / 500GB HDD", desc: "Fast System & Storage Drive", icon: "storage" }
     ]
   },
   {
     category: "Gear & Audio",
     items: [
-      { name: "Monitor", val: "ASUS ROG Swift 360Hz OLED 27\"", desc: "Fluid Motion Clarity", icon: "monitor" },
-      { name: "Keyboard", val: "Wooting 60HE (Analog Switches)", desc: "Rapid Trigger Performance", icon: "keyboard" },
-      { name: "Mouse", val: "Logitech G Pro X Superlight 2", desc: "60g Lightweight Precision", icon: "mouse" },
-      { name: "Microphone", val: "Shure SM7B + Wave XLR Interface", desc: "Studio-Grade Broadcaster Voice", icon: "mic" }
+      { name: "Monitor", val: "AOC 24\" 120Hz / 19\" 75Hz Dual Setup", desc: "Multi-Screen Efficiency", icon: "monitor" },
+      { name: "Keyboard", val: "Mechanical Keyboard (Yellow Switches)", desc: "Smooth Linear Keystrokes", icon: "keyboard" },
+      { name: "Mouse", val: "Attack Shark X11", desc: "Precision Lightweight Gaming Mouse", icon: "mouse" },
+      { name: "Microphone", val: "Realtek High Definition", desc: "Clear Communication", icon: "mic" },
+      { name: "Headset", val: "Legion GT Gaming Headset", desc: "Comfortable Stereo Sound", icon: "headset" }
     ]
   }
 ];
@@ -79,6 +80,12 @@ function getIcon(type) {
         <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
           <rect x="9" y="2" width="6" height="11" rx="3" />
           <path d="M5 10a7 7 0 0014 0M12 17v4M8 21h8" />
+        </svg>
+      );
+    case "headset":
+      return (
+        <svg className="h-5 w-5" fill="none" stroke="currentColor" strokeWidth="2" viewBox="0 0 24 24">
+          <path d="M3 18v-6a9 9 0 0118 0v6M21 19a2 2 0 01-2 2h-1a2 2 0 01-2-2v-3a2 2 0 012-2h3M3 19a2 2 0 002 2h1a2 2 0 002-2v-3a2 2 0 00-2-2H3" />
         </svg>
       );
     default:
