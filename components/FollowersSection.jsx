@@ -1,8 +1,9 @@
 "use client";
 
 import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 
-// List of recent community followers with relative time strings as requested
+// List of recent community followers with relative time strings as requested (default fallback)
 const initialFollowersData = [
   { name: "anass_rizk", relativeTime: "2m ago", avatar: "A" },
   { name: "f0nixxx", relativeTime: "15m ago", avatar: "F" },
@@ -16,7 +17,7 @@ const initialFollowersData = [
   { name: "gamer_pro", relativeTime: "2d ago", avatar: "G" }
 ];
 
-export default function FollowersSection({ loading, followersCount, onFollowClick, hasFollowed }) {
+export default function FollowersSection({ loading, followersCount, onFollowClick, hasFollowed, onFollowerIncrement }) {
   const [followers, setFollowers] = useState([]);
   const prevCountRef = useRef(followersCount);
 
@@ -30,13 +31,63 @@ export default function FollowersSection({ loading, followersCount, onFollowClic
     );
   }, []);
 
-  // Monitor followersCount to insert real-time follows immediately
+  // Monitor Streamlabs WebSocket for real-time live follows on Kick
+  useEffect(() => {
+    const token = process.env.NEXT_PUBLIC_STREAMLABS_SOCKET_TOKEN;
+    if (!token) return;
+
+    // Connect to Streamlabs socket
+    const socket = io(`https://sockets.streamlabs.com?token=${token}`, {
+      transports: ["websocket"]
+    });
+
+    socket.on("connect", () => {
+      console.log("[Streamlabs] Socket connected successfully");
+    });
+
+    socket.on("event", (eventData) => {
+      console.log("[Streamlabs] Event received:", eventData);
+      
+      // We look for 'follow' events
+      if (eventData.type === "follow" && eventData.message && eventData.message.length > 0) {
+        const newFollowName = eventData.message[0].name;
+        if (newFollowName) {
+          const newFollowerObj = {
+            name: newFollowName,
+            avatar: newFollowName.charAt(0).toUpperCase(),
+            relativeTime: "Just now",
+            isNew: true
+          };
+          
+          setFollowers(prev => {
+            // Avoid duplicate followers
+            if (prev.some(f => f.name === newFollowName && f.isNew)) {
+              return prev;
+            }
+            return [newFollowerObj, ...prev];
+          });
+
+          // Trigger parent callback to increment total followers count
+          if (onFollowerIncrement) {
+            onFollowerIncrement();
+          }
+        }
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, [onFollowerIncrement]);
+
+  // Monitor followersCount changes (e.g. from local website Follow click fallback)
   useEffect(() => {
     if (prevCountRef.current > 0 && followersCount > prevCountRef.current) {
       const diff = followersCount - prevCountRef.current;
       
+      // If we clicked the local follow button, add ourselves to the list
       const newFollowers = Array.from({ length: diff }).map((_, i) => ({
-        name: `New_Follower_${Math.floor(Math.random() * 900) + 100}`,
+        name: "New Supporter",
         avatar: "+",
         relativeTime: "Just now",
         isNew: true
@@ -99,7 +150,7 @@ export default function FollowersSection({ loading, followersCount, onFollowClic
           {followers.map((f, i) => (
             <div
               key={i}
-              className={`flex-shrink-0 flex items-center gap-2 bg-white/[0.02] border rounded-xl px-3.5 py-2 hover:bg-white/[0.05] hover:border-white/[0.07] transition-all duration-300 ${
+              className={`flex-shrink-0 flex items-center gap-2 bg-white/[0.02] border rounded-xl px-3.5 py-2 hover:bg-white/[0.05] hover:border-white/[0.07] transition-all duration-200 ${
                 f.isNew 
                   ? "border-[#53FC18] shadow-[0_0_12px_rgba(83,252,24,0.15)] animate-bounce" 
                   : "border-white/[0.04]"

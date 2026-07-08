@@ -276,6 +276,7 @@ export default function Home() {
               followersCount={followersCount}
               onFollowClick={handleFollowClick}
               hasFollowed={hasFollowed}
+              onFollowerIncrement={() => setFollowersCount(prev => prev + 1)}
             />
 
             {/* About card */}
