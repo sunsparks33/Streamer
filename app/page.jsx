@@ -11,6 +11,7 @@ import StreamGoals from "@/components/StreamGoals";
 import SetupSpecs from "@/components/SetupSpecs";
 import StreamMusic from "@/components/StreamMusic";
 import DiscordWidget from "@/components/DiscordWidget";
+import LiveTicker from "@/components/LiveTicker";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -296,6 +297,9 @@ export default function Home() {
 
       {/* Live alerts overlay */}
       <LiveAlerts alerts={alerts} onRemove={removeAlert} />
+
+      {/* Esports Scrolling Marquee Ticker */}
+      <LiveTicker followersCount={followersCount} alerts={alerts} />
 
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6 animate-fade-in-up">
 
