@@ -140,3 +140,18 @@ body {
     0 4px 16px -4px rgba(0,0,0,0.6);
   transform: translateY(-4px);
 }
+
+/* ─── Slide-in-right ────────────────────────────────────────────────── */
+@keyframes slide-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(40px) scale(0.96);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0) scale(1);
+  }
+}
+.animate-slide-in-right {
+  animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
+}

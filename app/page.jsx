@@ -1,10 +1,13 @@
 "use client";
 
-import React, { useState, useEffect } from "react";
+import React, { useState, useEffect, useRef } from "react";
+import { io } from "socket.io-client";
 import Navbar from "@/components/Navbar";
 import KickPlayer from "@/components/KickPlayer";
 import KickChat from "@/components/KickChat";
 import FollowersSection from "@/components/FollowersSection";
+import LiveAlerts from "@/components/LiveAlerts";
+import StreamGoals from "@/components/StreamGoals";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -125,6 +128,69 @@ export default function Home() {
   const [viewerCount, setViewerCount] = useState(0);
   const [followersCount, setFollowersCount] = useState(0);
   const [hasFollowed, setHasFollowed] = useState(false);
+  const [alerts, setAlerts] = useState([]);
+  const [currentDonation, setCurrentDonation] = useState(185);
+
+  const removeAlert = (id) => {
+    setAlerts(prev => prev.filter(a => a.id !== id));
+  };
+
+  const triggerAlert = (type, name, details = "") => {
+    const id = Date.now() + Math.random().toString();
+    setAlerts(prev => [...prev, { id, type, name, details }]);
+    setTimeout(() => {
+      setAlerts(prev => prev.filter(a => a.id !== id));
+    }, 5500);
+  };
+
+  /* Streamlabs Socket Connection */
+  useEffect(() => {
+    const token = process.env.NEXT_PUBLIC_STREAMLABS_SOCKET_TOKEN;
+    if (!token) return;
+
+    const socket = io(`https://sockets.streamlabs.com?token=${token}`, {
+      transports: ["websocket"]
+    });
+
+    socket.on("connect", () => {
+      console.log("[Streamlabs Socket] Connected successfully");
+    });
+
+    socket.on("event", (eventData) => {
+      // Follow Event
+      if (eventData.type === "follow" && eventData.message && eventData.message.length > 0) {
+        const followerName = eventData.message[0].name;
+        if (followerName) {
+          setFollowersCount(prev => prev + 1);
+          triggerAlert("follow", followerName);
+        }
+      }
+
+      // Donation Event
+      if (eventData.type === "donation" && eventData.message && eventData.message.length > 0) {
+        const donatorName = eventData.message[0].from;
+        const amountString = eventData.message[0].formatted_amount || `$${eventData.message[0].amount}`;
+        if (donatorName) {
+          const rawAmount = parseFloat(eventData.message[0].amount) || 0;
+          setCurrentDonation(prev => prev + rawAmount);
+          triggerAlert("donation", donatorName, amountString);
+        }
+      }
+
+      // Subscription Event
+      if (eventData.type === "subscription" && eventData.message && eventData.message.length > 0) {
+        const subName = eventData.message[0].name;
+        const tier = eventData.message[0].sub_plan || "Tier 1";
+        if (subName) {
+          triggerAlert("subscription", subName, tier);
+        }
+      }
+    });
+
+    return () => {
+      socket.disconnect();
+    };
+  }, []);
 
   /* Fetch data */
   useEffect(() => {
@@ -225,6 +291,9 @@ export default function Home() {
     <div className="flex flex-col min-h-screen" style={{ background: "var(--color-surface)" }}>
       <Navbar />
 
+      {/* Live alerts overlay */}
+      <LiveAlerts alerts={alerts} onRemove={removeAlert} />
+
       <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6 animate-fade-in-up">
 
         {/* ── Top info bar ─────────────────────────────────────────── */}
@@ -269,6 +338,14 @@ export default function Home() {
             ) : (
               <KickPlayer isLive={isLive} activeVOD={activeVOD} onCloseVOD={() => setActiveVOD(null)} profilePic={profilePic} />
             )}
+
+            {/* Stream Goals */}
+            <StreamGoals
+              followersCount={followersCount}
+              followerGoal={1500}
+              currentDonation={currentDonation}
+              donationGoal={500}
+            />
 
             {/* Followers Section */}
             <FollowersSection
