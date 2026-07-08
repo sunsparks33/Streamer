@@ -1,21 +1,65 @@
 "use client";
 
-import React from "react";
+import React, { useState, useEffect, useRef } from "react";
 
-const recentFollowersData = [
-  { name: "anass_rizk", time: "2m ago", avatar: "A" },
-  { name: "f0nixxx", time: "15m ago", avatar: "F" },
-  { name: "55ABDALLH55", time: "1h ago", avatar: "5" },
-  { name: "Anassrizk", time: "3h ago", avatar: "A" },
-  { name: "mouad_dev", time: "5h ago", avatar: "M" },
-  { name: "yassine_r", time: "12h ago", avatar: "Y" },
-  { name: "red_player", time: "1d ago", avatar: "R" },
-  { name: "kick_warrior", time: "1d ago", avatar: "K" },
-  { name: "mta_fan", time: "2d ago", avatar: "M" },
-  { name: "gamer_pro", time: "2d ago", avatar: "G" }
+// List of recent community followers with their offset in minutes from the time the page was opened
+const initialFollowersConfig = [
+  { name: "anass_rizk", offsetMinutes: 2, avatar: "A" },
+  { name: "f0nixxx", offsetMinutes: 15, avatar: "F" },
+  { name: "55ABDALLH55", offsetMinutes: 65, avatar: "5" },
+  { name: "Anassrizk", offsetMinutes: 180, avatar: "A" },
+  { name: "mouad_dev", offsetMinutes: 300, avatar: "M" },
+  { name: "yassine_r", offsetMinutes: 720, avatar: "Y" },
+  { name: "red_player", offsetMinutes: 1440, avatar: "R" },
+  { name: "kick_warrior", offsetMinutes: 1800, avatar: "K" },
+  { name: "mta_fan", offsetMinutes: 2880, avatar: "M" },
+  { name: "gamer_pro", offsetMinutes: 3200, avatar: "G" }
 ];
 
+// Helper to format exact time (HH:MM)
+function formatExactTime(date) {
+  const hours = String(date.getHours()).padStart(2, "0");
+  const minutes = String(date.getMinutes()).padStart(2, "0");
+  return `${hours}:${minutes}`;
+}
+
 export default function FollowersSection({ loading, followersCount, onFollowClick, hasFollowed }) {
+  const [followers, setFollowers] = useState([]);
+  const prevCountRef = useRef(followersCount);
+
+  // Initialize relative offsets to exact times on mount
+  useEffect(() => {
+    const now = new Date();
+    const initialized = initialFollowersConfig.map(f => {
+      const followTime = new Date(now.getTime() - f.offsetMinutes * 60000);
+      return {
+        name: f.name,
+        avatar: f.avatar,
+        exactTime: formatExactTime(followTime),
+        isNew: false
+      };
+    });
+    setFollowers(initialized);
+  }, []);
+
+  // Monitor followersCount to insert real-time follows immediately
+  useEffect(() => {
+    if (prevCountRef.current > 0 && followersCount > prevCountRef.current) {
+      const now = new Date();
+      const diff = followersCount - prevCountRef.current;
+      
+      const newFollowers = Array.from({ length: diff }).map((_, i) => ({
+        name: `New_Follower_${Math.floor(Math.random() * 900) + 100}`,
+        avatar: "+",
+        exactTime: formatExactTime(now),
+        isNew: true
+      }));
+
+      setFollowers(prev => [...newFollowers, ...prev]);
+    }
+    prevCountRef.current = followersCount;
+  }, [followersCount]);
+
   return (
     <div className="glass rounded-2xl p-5 border border-white/[0.06] bg-gradient-to-br from-[#111118]/80 to-[#0a0a0f]/80 space-y-4">
       <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-4 pb-3 border-b border-white/[0.04]">
@@ -65,17 +109,27 @@ export default function FollowersSection({ loading, followersCount, onFollowClic
       <div>
         <h3 className="text-[10px] font-bold text-white/40 uppercase tracking-widest mb-3">Recent Followers</h3>
         <div className="flex items-center gap-2.5 overflow-x-auto pb-2 scrollbar-thin scrollbar-thumb-white/10 scrollbar-track-transparent">
-          {recentFollowersData.map((f, i) => (
+          {followers.map((f, i) => (
             <div
               key={i}
-              className="flex-shrink-0 flex items-center gap-2 bg-white/[0.02] border border-white/[0.04] rounded-xl px-3.5 py-2 hover:bg-white/[0.05] hover:border-white/[0.07] transition-all duration-200"
+              className={`flex-shrink-0 flex items-center gap-2 bg-white/[0.02] border rounded-xl px-3.5 py-2 hover:bg-white/[0.05] hover:border-white/[0.07] transition-all duration-300 ${
+                f.isNew 
+                  ? "border-[#53FC18] shadow-[0_0_12px_rgba(83,252,24,0.15)] animate-bounce" 
+                  : "border-white/[0.04]"
+              }`}
             >
-              <div className="h-7 w-7 rounded-full bg-rose-600/10 border border-rose-600/30 flex items-center justify-center text-[10px] font-black text-rose-400">
+              <div className={`h-7 w-7 rounded-full border flex items-center justify-center text-[10px] font-black ${
+                f.isNew
+                  ? "bg-[#53FC18]/15 border-[#53FC18]/45 text-[#53FC18]"
+                  : "bg-rose-600/10 border-rose-600/30 text-rose-400"
+              }`}>
                 {f.avatar}
               </div>
               <div className="text-left">
                 <div className="text-[11px] font-bold text-white/80 leading-tight tracking-wide">{f.name}</div>
-                <div className="text-[9px] text-white/30 leading-none mt-0.5">{f.time}</div>
+                <div className="text-[9px] text-[#53FC18] leading-none mt-0.5 font-bold">
+                  {f.isNew ? "Just now" : `@ ${f.exactTime}`}
+                </div>
               </div>
             </div>
           ))}
