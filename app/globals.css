@@ -60,13 +60,28 @@ body {
 }
 
 /* ─── Scrollbar ─────────────────────────────────────────────────────── */
-::-webkit-scrollbar        { width: 5px; height: 5px; }
-::-webkit-scrollbar-track  { background: var(--color-surface); }
-::-webkit-scrollbar-thumb  {
+* {
+  scrollbar-width: thin;
+  scrollbar-color: var(--color-brand-dim) var(--color-surface);
+}
+
+*::-webkit-scrollbar {
+  width: 5px;
+  height: 5px;
+}
+
+*::-webkit-scrollbar-track {
+  background: var(--color-surface);
+}
+
+*::-webkit-scrollbar-thumb {
   background: var(--color-brand-dim);
   border-radius: 9999px;
 }
-::-webkit-scrollbar-thumb:hover { background: var(--color-brand); }
+
+*::-webkit-scrollbar-thumb:hover {
+  background: var(--color-brand);
+}
 
 /* ─── Scroll Progress Bar ───────────────────────────────────────────── */
 @keyframes grow-progress {

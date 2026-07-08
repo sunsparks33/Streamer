@@ -4,13 +4,14 @@ import React, { useState, useEffect } from "react";
 
 export default function DiscordWidget({ 
   serverId = "1084146853702008872", 
-  inviteUrl = "https://discord.gg/T2Xx6fS8J",
-  totalMembers = "25,000"
+  inviteUrl = "https://discord.gg/T2Xx6fS8J"
 }) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
   const [expanded, setExpanded] = useState(false);
+  const [totalMembers, setTotalMembers] = useState("10,000"); // Dynamic live fallback
 
+  // Fetch server widget (for online members list and online presence count)
   useEffect(() => {
     async function fetchWidget() {
       try {
@@ -27,6 +28,24 @@ export default function DiscordWidget({
     }
     fetchWidget();
   }, [serverId]);
+
+  // Fetch real total server members count dynamically from public invite API
+  useEffect(() => {
+    async function fetchTotalMembers() {
+      try {
+        const r = await fetch("https://discord.com/api/v9/invites/T2Xx6fS8J?with_counts=true");
+        if (r.ok) {
+          const d = await r.json();
+          if (d.approximate_member_count != null) {
+            setTotalMembers(d.approximate_member_count.toLocaleString());
+          }
+        }
+      } catch (e) {
+        console.error("Error fetching Discord total members:", e);
+      }
+    }
+    fetchTotalMembers();
+  }, []);
 
   const onlineCount = data?.presence_count || 0;
   const serverName = data?.name || "RED RolePlay";
@@ -67,7 +86,7 @@ export default function DiscordWidget({
           {/* Discord Icon */}
           <div className="h-11 w-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center text-[#5865F2] shadow-[0_0_15px_rgba(88,101,242,0.1)]">
             <svg className="h-6 w-6 fill-current" viewBox="0 0 24 24">
-              <path d="M20.3 4.4A19.1 19.1 0 0 0 15.6 3c-.2.4-.4.9-.6 1.3a17.6 17.6 0 0 0-5.3 0A12.9 12.9 0 0 0 9.1 3 19.2 19.2 0 0 0 4.4 4.4 20 20 0 0 0 1 18.2a19.4 19.4 0 0 0 5.9 2.9 14.4 14.4 0 0 0 1.3-2 12.6 12.6 0 0 1-2-.9l.5-.4a13.7 13.7 0 0 0 11.7 0l.5.4a12.7 12.7 0 0 1-2 .9 14.2 14.2 0 0 0 1.3 2A19.3 19.3 0 0 0 23 18.2 19.9 19.9 0 0 0 20.3 4.4ZM8.5 15.4c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Zm7 0c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Z" />
+              <path d="M20.3 4.4A19.1 19.1 0 0 0 15.6 3c-.2.4-.4.9-.6 1.3a17.6 17.6 0 0 0-5.3 0A12.9 12.9 0 0 0 9.1 3 19.2 19.2 0 0 0 4.4 4.4 20 20 0 0 0 1 18.2a19.4 19.4 0 0 0 5.9 2.9 14.4 14.4 0 0 0 1.3-2 12.6 12.6 0 0 1-2-.9l.5-.4a13.7 13.7 0 0 0 11.7 0l.5.4a12.7 12.7 0 0 1-2 .9 14.2 14.2 0 0 0 1.3 2a19.3 19.3 0 0 0 23 18.2 19.9 19.9 0 0 0-2.7-13.8ZM8.5 15.4c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Zm7 0c-1.1 0-2-1-2-2.3s.9-2.3 2-2.3 2 1 2 2.3-.9 2.3-2 2.3Z" />
             </svg>
           </div>
 
@@ -111,7 +130,7 @@ export default function DiscordWidget({
           </div>
 
           {/* Compact 3-Column Grid */}
-          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1 scrollbar-thin scrollbar-thumb-white/10">
+          <div className="grid grid-cols-2 sm:grid-cols-3 gap-2 max-h-[220px] overflow-y-auto pr-1">
             {allMembers.map((member, idx) => (
               <div
                 key={idx}
