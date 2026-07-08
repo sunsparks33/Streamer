@@ -2,9 +2,14 @@
 
 import React, { useState, useEffect } from "react";
 
-export default function DiscordWidget({ serverId = "1084146853702008872", inviteUrl = "https://discord.gg/T2Xx6fS8J" }) {
+export default function DiscordWidget({ 
+  serverId = "1084146853702008872", 
+  inviteUrl = "https://discord.gg/T2Xx6fS8J",
+  totalMembers = "25,000" // Customizable total members count
+}) {
   const [data, setData] = useState(null);
   const [loading, setLoading] = useState(true);
+  const [showModal, setShowModal] = useState(false);
 
   useEffect(() => {
     async function fetchWidget() {
@@ -24,30 +29,40 @@ export default function DiscordWidget({ serverId = "1084146853702008872", invite
   }, [serverId]);
 
   const onlineCount = data?.presence_count || 0;
-  const serverName = data?.name || "1_bp Community";
+  const serverName = data?.name || "RED RolePlay";
   const joinUrl = data?.instant_invite || inviteUrl;
-  const onlineMembers = (data?.members || []).slice(0, 6);
+  const allMembers = data?.members || [];
+  const previewMembers = allMembers.slice(0, 6);
 
   return (
-    <div className="glass rounded-2xl p-5 border border-white/[0.06] bg-gradient-to-br from-[#111118]/80 to-[#0a0a0f]/80 space-y-4">
+    <div className="glass rounded-2xl p-5 border border-white/[0.06] bg-gradient-to-br from-[#111118]/80 to-[#0a0a0f]/80 space-y-4 relative">
       {/* Header */}
-      <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
+      <div className="flex flex-col sm:flex-row sm:items-center justify-between gap-3 pb-3 border-b border-white/[0.04]">
         <div className="flex items-center gap-2.5">
           <div className="h-5 w-1 rounded-full bg-[#5865F2]" />
           <h2 className="text-sm font-bold text-white tracking-tight uppercase">Discord Guild</h2>
         </div>
 
-        {/* Online Indicator */}
-        {!loading && onlineCount > 0 && (
-          <div className="flex items-center gap-1.5 px-2.5 py-0.5 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/25 text-[10px] font-bold text-[#5865F2] uppercase tracking-wider">
-            <span className="h-1.5 w-1.5 rounded-full bg-[#5865F2] animate-pulse" />
-            {onlineCount.toLocaleString()} Online
+        {/* Counts indicators: Online / Total */}
+        {!loading && (
+          <div className="flex items-center gap-2 flex-wrap">
+            {/* Online Count */}
+            {onlineCount > 0 && (
+              <div className="flex items-center gap-1.2 px-2.5 py-0.5 rounded-full bg-[#5865F2]/10 border border-[#5865F2]/25 text-[10px] font-bold text-[#5865F2] uppercase tracking-wider">
+                <span className="h-1.5 w-1.5 rounded-full bg-[#5865F2] animate-pulse mr-1" />
+                {onlineCount.toLocaleString()} Online
+              </div>
+            )}
+            {/* Total Count */}
+            <div className="flex items-center gap-1 px-2.5 py-0.5 rounded-full bg-white/[0.04] border border-white/[0.08] text-[10px] font-bold text-white/40 uppercase tracking-wider">
+              {totalMembers} Members
+            </div>
           </div>
         )}
       </div>
 
       <div className="flex flex-col sm:flex-row items-center justify-between gap-4">
-        {/* Left Side Info */}
+        {/* Left Info */}
         <div className="flex items-center gap-3.5">
           {/* Discord Logo Icon */}
           <div className="h-11 w-11 rounded-xl bg-[#5865F2]/10 border border-[#5865F2]/20 flex items-center justify-center text-[#5865F2] shadow-[0_0_15px_rgba(88,101,242,0.1)]">
@@ -58,26 +73,36 @@ export default function DiscordWidget({ serverId = "1084146853702008872", invite
 
           <div className="text-left">
             <h3 className="text-xs font-bold text-white/80 leading-snug tracking-wide">{serverName}</h3>
-            <p className="text-[10px] text-white/30 font-medium">Join the voice chats, get live announcements & hang out.</p>
+            <p className="text-[10px] text-white/30 font-medium">Join voice channels, get announcements & browse online members.</p>
           </div>
         </div>
 
-        {/* Right Side Invite CTA */}
-        <a
-          href={joinUrl}
-          target="_blank"
-          rel="noopener noreferrer"
-          className="w-full sm:w-auto group inline-flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-5 py-2.5 text-xs font-bold text-white tracking-wide uppercase transition-all duration-300 shadow-[0_0_20px_rgba(88,101,242,0.25)] hover:bg-[#6d78f5] hover:scale-[1.03] hover:shadow-[0_0_28px_rgba(88,101,242,0.45)] active:scale-[0.98]"
-        >
-          Join Server
-        </a>
+        {/* Buttons: Show Members & Join */}
+        <div className="flex items-center gap-2 w-full sm:w-auto">
+          {allMembers.length > 0 && (
+            <button
+              onClick={() => setShowModal(true)}
+              className="flex-1 sm:flex-initial inline-flex items-center justify-center gap-1.5 rounded-xl border border-white/[0.08] bg-white/[0.02] px-4 py-2.5 text-xs font-bold text-white/70 hover:bg-white/[0.05] hover:text-white transition-all duration-200"
+            >
+              Show Members
+            </button>
+          )}
+          <a
+            href={joinUrl}
+            target="_blank"
+            rel="noopener noreferrer"
+            className="flex-1 sm:w-auto group inline-flex items-center justify-center gap-2 rounded-xl bg-[#5865F2] px-5 py-2.5 text-xs font-bold text-white tracking-wide uppercase transition-all duration-300 shadow-[0_0_20px_rgba(88,101,242,0.25)] hover:bg-[#6d78f5] hover:scale-[1.03] hover:shadow-[0_0_28px_rgba(88,101,242,0.45)] active:scale-[0.98]"
+          >
+            Join Server
+          </a>
+        </div>
       </div>
 
-      {/* Online Members Faces if widget enabled */}
-      {!loading && onlineMembers.length > 0 && (
-        <div className="flex items-center gap-2 pt-2 border-t border-white/[0.03]">
+      {/* Online Members Avatars Footer */}
+      {!loading && previewMembers.length > 0 && (
+        <div className="flex items-center gap-2.5 pt-3 border-t border-white/[0.03]">
           <div className="flex -space-x-2.5 overflow-hidden">
-            {onlineMembers.map((member, idx) => (
+            {previewMembers.map((member, idx) => (
               <div
                 key={idx}
                 className="inline-block h-6 w-6 rounded-full ring-2 ring-[#0a0a0f] overflow-hidden bg-[#18181f] border border-white/5"
@@ -101,6 +126,78 @@ export default function DiscordWidget({ serverId = "1084146853702008872", invite
           <span className="text-[9px] font-bold text-white/20 uppercase tracking-widest">
             Active Community Members Online
           </span>
+        </div>
+      )}
+
+      {/* Online Members Lightbox Modal */}
+      {showModal && (
+        <div className="fixed inset-0 z-50 flex items-center justify-center p-4 bg-black/80 backdrop-blur-md animate-fade-in">
+          <div className="relative w-full max-w-md glass rounded-3xl border border-white/10 bg-[#0e0e14]/95 p-6 shadow-2xl space-y-4 max-h-[80vh] flex flex-col">
+            
+            {/* Modal Header */}
+            <div className="flex items-center justify-between pb-3 border-b border-white/[0.06]">
+              <div>
+                <h3 className="text-sm font-bold text-white uppercase tracking-wider">Online Members ({allMembers.length})</h3>
+                <p className="text-[10px] text-white/30 font-medium">Currently active in RED RolePlay Discord</p>
+              </div>
+              <button
+                onClick={() => setShowModal(false)}
+                className="h-8 w-8 rounded-full bg-white/[0.04] border border-white/[0.08] hover:bg-white/[0.08] flex items-center justify-center text-white/60 hover:text-white transition-all"
+              >
+                <svg className="h-4 w-4" fill="none" stroke="currentColor" strokeWidth="2.5" viewBox="0 0 24 24">
+                  <path d="M6 18L18 6M6 6l12 12" />
+                </svg>
+              </button>
+            </div>
+
+            {/* Scrollable Members List */}
+            <div className="flex-1 overflow-y-auto pr-1 space-y-2 scrollbar-thin scrollbar-thumb-white/10">
+              {allMembers.map((member, idx) => (
+                <div
+                  key={idx}
+                  className="flex items-center justify-between p-2 rounded-xl bg-white/[0.01] border border-white/[0.03] hover:bg-white/[0.03] transition-colors"
+                >
+                  <div className="flex items-center gap-2.5">
+                    <div className="relative h-8 w-8 rounded-full overflow-hidden bg-[#18181f] border border-white/5 flex-shrink-0">
+                      {member.avatar_url ? (
+                        // eslint-disable-next-line @next/next/no-img-element
+                        <img
+                          src={member.avatar_url}
+                          alt={member.username}
+                          className="h-full w-full object-cover"
+                        />
+                      ) : (
+                        <div className="h-full w-full flex items-center justify-center text-[10px] font-bold text-[#5865F2] bg-[#5865F2]/10">
+                          {member.username.charAt(0).toUpperCase()}
+                        </div>
+                      )}
+                      {/* Discord Status Dot Indicator */}
+                      <span className="absolute bottom-0 right-0 block h-2 w-2 rounded-full ring-1 ring-[#0e0e14] bg-[#23a55a]" />
+                    </div>
+                    <span className="text-xs font-bold text-white/80">{member.username}</span>
+                  </div>
+                  
+                  {member.game && (
+                    <span className="text-[9px] font-semibold bg-[#5865F2]/10 border border-[#5865F2]/25 text-[#5865F2] px-2 py-0.5 rounded-full truncate max-w-[120px]" title={`Playing ${member.game.name}`}>
+                      Playing {member.game.name}
+                    </span>
+                  )}
+                </div>
+              ))}
+            </div>
+
+            {/* Modal Footer invite link */}
+            <div className="pt-2 border-t border-white/[0.06] flex items-center justify-end">
+              <a
+                href={joinUrl}
+                target="_blank"
+                rel="noopener noreferrer"
+                className="inline-flex items-center gap-1.5 rounded-xl bg-[#5865F2] px-4 py-2 text-xs font-bold text-white uppercase hover:bg-[#6d78f5] transition-all"
+              >
+                Join & Talk
+              </a>
+            </div>
+          </div>
         </div>
       )}
     </div>
