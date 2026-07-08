@@ -155,3 +155,13 @@ body {
 .animate-slide-in-right {
   animation: slide-in-right 0.35s cubic-bezier(0.16, 1, 0.3, 1) forwards;
 }
+
+/* ─── Equalizer Music Bars ──────────────────────────────────────────── */
+@keyframes equalizer {
+  0% {
+    height: 4px;
+  }
+  100% {
+    height: 14px;
+  }
+}

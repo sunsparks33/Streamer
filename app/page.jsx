@@ -8,6 +8,8 @@ import KickChat from "@/components/KickChat";
 import FollowersSection from "@/components/FollowersSection";
 import LiveAlerts from "@/components/LiveAlerts";
 import StreamGoals from "@/components/StreamGoals";
+import SetupSpecs from "@/components/SetupSpecs";
+import StreamMusic from "@/components/StreamMusic";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -367,6 +369,12 @@ export default function Home() {
                 Make sure to check out the chat on the right and drop a follow!
               </p>
             </div>
+
+            {/* Setup specs card */}
+            <SetupSpecs />
+
+            {/* Stream Music beats card */}
+            <StreamMusic />
 
             {/* Scroll indicator — outside the About card */}
             {!loading && lastStreams.length > 0 && !activeVOD && (
