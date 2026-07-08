@@ -12,6 +12,7 @@ import SetupSpecs from "@/components/SetupSpecs";
 import StreamMusic from "@/components/StreamMusic";
 import DiscordWidget from "@/components/DiscordWidget";
 import LiveTicker from "@/components/LiveTicker";
+import MtaCharacterCard from "@/components/MtaCharacterCard";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -377,6 +378,9 @@ export default function Home() {
                 Make sure to check out the chat on the right and drop a follow!
               </p>
             </div>
+
+            {/* MTA Character ID Card */}
+            <MtaCharacterCard profilePic={profilePic} />
 
             {/* Setup specs card */}
             <SetupSpecs />
