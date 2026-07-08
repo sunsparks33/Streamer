@@ -129,7 +129,7 @@ export default function Home() {
   const [followersCount, setFollowersCount] = useState(0);
   const [hasFollowed, setHasFollowed] = useState(false);
   const [alerts, setAlerts] = useState([]);
-  const [currentDonation, setCurrentDonation] = useState(185);
+  const [currentDonation, setCurrentDonation] = useState(0);
 
   const removeAlert = (id) => {
     setAlerts(prev => prev.filter(a => a.id !== id));
@@ -344,7 +344,7 @@ export default function Home() {
               followersCount={followersCount}
               followerGoal={1500}
               currentDonation={currentDonation}
-              donationGoal={500}
+              donationGoal={100}
             />
 
             {/* Followers Section */}
