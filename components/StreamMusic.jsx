@@ -43,7 +43,7 @@ export default function StreamMusic() {
           <p className="text-[10px] text-white/30 font-medium">Curated tracklist for coding, grinding, and chilling.</p>
           <div className="pt-1.5">
             <a
-              href="https://open.spotify.com/playlist/37i9dQZF1DWWQRwui0ExPn"
+              href="https://open.spotify.com/playlist/0BDWp1v8muzEwMvMlkiMYO?si=970d615a05a7403b"
               target="_blank"
               rel="noopener noreferrer"
               className="inline-flex items-center gap-1.5 rounded-lg bg-emerald-500/[0.08] border border-emerald-500/25 px-2.5 py-1 text-[9px] font-bold text-emerald-400 uppercase tracking-widest hover:bg-emerald-500 hover:text-black transition-all duration-200"
@@ -58,11 +58,11 @@ export default function StreamMusic() {
       </div>
 
       {/* Playlist Embed Iframe */}
-      <div className="relative w-full h-[80px] rounded-xl overflow-hidden bg-black/40 border border-white/[0.04]">
+      <div className="relative w-full h-[152px] rounded-xl overflow-hidden bg-black/40 border border-white/[0.04]">
         <iframe
-          src="https://open.spotify.com/embed/playlist/37i9dQZF1DWWQRwui0ExPn?utm_source=generator&theme=0"
+          src="https://open.spotify.com/embed/playlist/0BDWp1v8muzEwMvMlkiMYO?utm_source=generator&si=970d615a05a7403b"
           width="100%"
-          height="80"
+          height="152"
           frameBorder="0"
           allowFullScreen=""
           allow="autoplay; clipboard-write; encrypted-media; fullscreen; picture-in-picture"
