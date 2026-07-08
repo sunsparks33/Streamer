@@ -2,56 +2,43 @@
 
 import React, { useState, useEffect, useRef } from "react";
 
-// List of recent community followers with their offset in minutes from the time the page was opened
-const initialFollowersConfig = [
-  { name: "anass_rizk", offsetMinutes: 2, avatar: "A" },
-  { name: "f0nixxx", offsetMinutes: 15, avatar: "F" },
-  { name: "55ABDALLH55", offsetMinutes: 65, avatar: "5" },
-  { name: "Anassrizk", offsetMinutes: 180, avatar: "A" },
-  { name: "mouad_dev", offsetMinutes: 300, avatar: "M" },
-  { name: "yassine_r", offsetMinutes: 720, avatar: "Y" },
-  { name: "red_player", offsetMinutes: 1440, avatar: "R" },
-  { name: "kick_warrior", offsetMinutes: 1800, avatar: "K" },
-  { name: "mta_fan", offsetMinutes: 2880, avatar: "M" },
-  { name: "gamer_pro", offsetMinutes: 3200, avatar: "G" }
+// List of recent community followers with relative time strings as requested
+const initialFollowersData = [
+  { name: "anass_rizk", relativeTime: "2m ago", avatar: "A" },
+  { name: "f0nixxx", relativeTime: "15m ago", avatar: "F" },
+  { name: "55ABDALLH55", relativeTime: "1h ago", avatar: "5" },
+  { name: "Anassrizk", relativeTime: "3h ago", avatar: "A" },
+  { name: "mouad_dev", relativeTime: "5h ago", avatar: "M" },
+  { name: "yassine_r", relativeTime: "12h ago", avatar: "Y" },
+  { name: "red_player", relativeTime: "1d ago", avatar: "R" },
+  { name: "kick_warrior", relativeTime: "1d ago", avatar: "K" },
+  { name: "mta_fan", relativeTime: "2d ago", avatar: "M" },
+  { name: "gamer_pro", relativeTime: "2d ago", avatar: "G" }
 ];
-
-// Helper to format exact time (HH:MM)
-function formatExactTime(date) {
-  const hours = String(date.getHours()).padStart(2, "0");
-  const minutes = String(date.getMinutes()).padStart(2, "0");
-  return `${hours}:${minutes}`;
-}
 
 export default function FollowersSection({ loading, followersCount, onFollowClick, hasFollowed }) {
   const [followers, setFollowers] = useState([]);
   const prevCountRef = useRef(followersCount);
 
-  // Initialize relative offsets to exact times on mount
+  // Initialize list on mount
   useEffect(() => {
-    const now = new Date();
-    const initialized = initialFollowersConfig.map(f => {
-      const followTime = new Date(now.getTime() - f.offsetMinutes * 60000);
-      return {
-        name: f.name,
-        avatar: f.avatar,
-        exactTime: formatExactTime(followTime),
+    setFollowers(
+      initialFollowersData.map(f => ({
+        ...f,
         isNew: false
-      };
-    });
-    setFollowers(initialized);
+      }))
+    );
   }, []);
 
   // Monitor followersCount to insert real-time follows immediately
   useEffect(() => {
     if (prevCountRef.current > 0 && followersCount > prevCountRef.current) {
-      const now = new Date();
       const diff = followersCount - prevCountRef.current;
       
       const newFollowers = Array.from({ length: diff }).map((_, i) => ({
         name: `New_Follower_${Math.floor(Math.random() * 900) + 100}`,
         avatar: "+",
-        exactTime: formatExactTime(now),
+        relativeTime: "Just now",
         isNew: true
       }));
 
@@ -127,8 +114,10 @@ export default function FollowersSection({ loading, followersCount, onFollowClic
               </div>
               <div className="text-left">
                 <div className="text-[11px] font-bold text-white/80 leading-tight tracking-wide">{f.name}</div>
-                <div className="text-[9px] text-[#53FC18] leading-none mt-0.5 font-bold">
-                  {f.isNew ? "Just now" : `@ ${f.exactTime}`}
+                <div className={`text-[9px] leading-none mt-0.5 font-bold ${
+                  f.isNew ? "text-[#53FC18]" : "text-white/30"
+                }`}>
+                  {f.relativeTime}
                 </div>
               </div>
             </div>
