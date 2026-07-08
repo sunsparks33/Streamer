@@ -15,7 +15,7 @@ export default function DiscordWidget({
   useEffect(() => {
     async function fetchWidget() {
       try {
-        const r = await fetch(`https://discord.com/api/guilds/${serverId}/widget.json`);
+        const r = await fetch(`https://discord.com/api/guilds/${serverId}/widget.json?t=${Date.now()}`, { cache: "no-store" });
         if (r.ok) {
           const d = await r.json();
           setData(d);
@@ -27,13 +27,16 @@ export default function DiscordWidget({
       }
     }
     fetchWidget();
+
+    const interval = setInterval(fetchWidget, 30000);
+    return () => clearInterval(interval);
   }, [serverId]);
 
   // Fetch real total server members count dynamically from public invite API
   useEffect(() => {
     async function fetchTotalMembers() {
       try {
-        const r = await fetch("https://discord.com/api/v9/invites/T2Xx6fS8J?with_counts=true");
+        const r = await fetch(`https://discord.com/api/v9/invites/T2Xx6fS8J?with_counts=true&t=${Date.now()}`, { cache: "no-store" });
         if (r.ok) {
           const d = await r.json();
           if (d.approximate_member_count != null) {
@@ -45,6 +48,9 @@ export default function DiscordWidget({
       }
     }
     fetchTotalMembers();
+
+    const interval = setInterval(fetchTotalMembers, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const onlineCount = data?.presence_count || 0;
