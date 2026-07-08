@@ -4,7 +4,7 @@ import React from "react";
 
 export default function MtaCharacterCard({ profilePic }) {
   // Fallback avatar if profile pic is not loaded
-  const avatarUrl = profilePic || "https://kick.com/api/v2/channels/reda-3x/placeholder";
+  const avatarUrl = "/char_avatar.png";
 
   return (
     <div className="glass rounded-2xl p-5 border border-white/[0.06] bg-gradient-to-br from-[#111118]/90 to-[#0a0a0f]/90 space-y-4">
