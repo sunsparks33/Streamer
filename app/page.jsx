@@ -302,7 +302,7 @@ export default function Home() {
       {/* Esports Scrolling Marquee Ticker */}
       <LiveTicker followersCount={followersCount} alerts={alerts} />
 
-      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6 animate-fade-in-up">
+      <main className="flex-1 w-full max-w-7xl mx-auto px-4 sm:px-6 lg:px-8 py-7 space-y-6">
 
         {/* ── Top info bar ─────────────────────────────────────────── */}
         <div className="glass rounded-2xl px-5 py-3.5 flex flex-wrap items-center justify-between gap-3">
@@ -340,7 +340,7 @@ export default function Home() {
         <div className="grid grid-cols-1 lg:grid-cols-4 gap-5 items-start">
 
           {/* Player column */}
-          <div className="lg:col-span-3 space-y-5">
+          <div className="lg:col-span-3 space-y-5 animate-fade-in-up">
             {loading ? (
               <div className="skeleton w-full rounded-2xl aspect-video" />
             ) : (
@@ -402,7 +402,7 @@ export default function Home() {
           </div>
 
           {/* Chat column */}
-          <div className="lg:col-span-1 lg:sticky lg:top-[68px]">
+          <div className="lg:col-span-1 lg:sticky lg:top-[76px] self-start">
             <KickChat />
           </div>
         </div>
