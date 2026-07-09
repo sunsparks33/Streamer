@@ -402,7 +402,7 @@ export default function Home() {
           </div>
 
           {/* Chat column */}
-          <div className="lg:col-span-1 lg:sticky lg:top-[76px] self-start">
+          <div className="lg:col-span-1">
             <KickChat />
           </div>
         </div>
