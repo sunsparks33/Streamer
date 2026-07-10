@@ -3,37 +3,68 @@
 import React, { useState, useEffect } from "react";
 
 export default function LeaderboardPodium() {
-  // Top viewers watch time (loyalty leaderboard) state in hours
-  const [leaders, setLeaders] = useState([
-    { name: "anass_rizk", hours: 152.5, rank: 1, color: "from-amber-400 via-yellow-500 to-amber-600", glow: "shadow-[0_0_25px_rgba(245,158,11,0.35)]", border: "border-amber-400/40" },
-    { name: "mouad_dev", hours: 118.2, rank: 2, color: "from-slate-300 via-zinc-400 to-slate-500", glow: "shadow-[0_0_20px_rgba(209,213,219,0.25)]", border: "border-slate-300/30" },
-    { name: "yassine_r", hours: 85.0, rank: 3, color: "from-orange-400 via-amber-700 to-orange-600", glow: "shadow-[0_0_15px_rgba(180,83,9,0.2)]", border: "border-orange-500/20" }
-  ]);
+  // Default fallback data
+  const fallbackLeaders = [
+    { name: "anass_rizk", hours: "3.6 Hrs", points: 210, rank: 1, color: "from-amber-400 via-yellow-500 to-amber-600", glow: "shadow-[0_0_25px_rgba(245,158,11,0.35)]", border: "border-amber-400/40" },
+    { name: "mouadhabboul1", hours: "3.3 Hrs", points: 195, rank: 2, color: "from-slate-300 via-zinc-400 to-slate-500", glow: "shadow-[0_0_20px_rgba(209,213,219,0.25)]", border: "border-slate-300/30" },
+    { name: "solayman33_34", hours: "2.7 Hrs", points: 160, rank: 3, color: "from-orange-400 via-amber-700 to-orange-600", glow: "shadow-[0_0_15px_rgba(180,83,9,0.2)]", border: "border-orange-500/20" }
+  ];
 
-  // Session timer for the active viewer
-  const [sessionTime, setSessionTime] = useState(0);
-  const [pointsEarned, setPointsEarned] = useState(0);
+  const [leaders, setLeaders] = useState(fallbackLeaders);
+  const [loading, setLoading] = useState(true);
 
+  // Fetch real-time leaderboard data from our Next.js API endpoint proxy
   useEffect(() => {
-    const timer = setInterval(() => {
-      setSessionTime(prev => {
-        const nextTime = prev + 1;
-        // Earn 1 Loyalty Point every 10 seconds of active watching!
-        if (nextTime % 10 === 0) {
-          setPointsEarned(p => p + 1);
+    async function fetchLeaderboard() {
+      try {
+        const res = await fetch("/api/leaderboard");
+        if (res.ok) {
+          const data = await res.json();
+          if (Array.isArray(data) && data.length >= 3) {
+            const formatted = data.slice(0, 3).map((item, idx) => {
+              const rank = idx + 1;
+              let color = "";
+              let glow = "";
+              let border = "";
+
+              if (rank === 1) {
+                color = "from-amber-400 via-yellow-500 to-amber-600";
+                glow = "shadow-[0_0_25px_rgba(245,158,11,0.4)]";
+                border = "border-amber-400/50";
+              } else if (rank === 2) {
+                color = "from-slate-300 via-zinc-400 to-slate-500";
+                glow = "shadow-[0_0_20px_rgba(209,213,219,0.3)]";
+                border = "border-slate-300/40";
+              } else {
+                color = "from-orange-400 via-amber-700 to-orange-600";
+                glow = "shadow-[0_0_15px_rgba(180,83,9,0.25)]";
+                border = "border-orange-500/30";
+              }
+
+              // watchtime is returned in minutes from BotRix, convert to hours
+              const hrs = (item.watchtime / 60).toFixed(1);
+
+              return {
+                name: item.name,
+                hours: `${hrs} Hrs`,
+                points: item.points,
+                rank,
+                color,
+                glow,
+                border
+              };
+            });
+            setLeaders(formatted);
+          }
         }
-        return nextTime;
-      });
-    }, 1000);
-
-    return () => clearInterval(timer);
+      } catch (err) {
+        console.error("Error fetching live leaderboard from API:", err);
+      } finally {
+        setLoading(false);
+      }
+    }
+    fetchLeaderboard();
   }, []);
-
-  const formatSessionTime = (secs) => {
-    const mins = Math.floor(secs / 60);
-    const s = secs % 60;
-    return `${mins}m ${s < 10 ? "0" : ""}${s}s`;
-  };
 
   const gold = leaders.find(l => l.rank === 1);
   const silver = leaders.find(l => l.rank === 2);
@@ -45,11 +76,14 @@ export default function LeaderboardPodium() {
       <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
         <div className="flex items-center gap-2.5">
           <div className="h-5 w-1 rounded-full bg-rose-600" />
-          <h2 className="text-sm font-bold text-white tracking-tight uppercase">Top Viewers (Watch Time)</h2>
+          <h2 className="text-sm font-bold text-white tracking-tight uppercase">Top Viewers (Loyalty Board)</h2>
         </div>
-        <span className="text-[9px] font-black bg-rose-500/10 border border-rose-500/20 text-rose-500 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
-          Loyalty Leaderboard
-        </span>
+        <div className="flex items-center gap-1.5">
+          {loading && <span className="skeleton h-3 w-12 rounded" />}
+          <span className="text-[9px] font-black bg-rose-500/10 border border-rose-500/20 text-rose-500 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+            BotRix Live Feed
+          </span>
+        </div>
       </div>
 
       {/* Podium Grid */}
@@ -60,7 +94,7 @@ export default function LeaderboardPodium() {
           <div className="flex flex-col items-center flex-1 group">
             {/* Watch Hours badge */}
             <span className="text-[8px] font-bold text-zinc-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full mb-1">
-              Rank #2
+              {silver.points} Pts
             </span>
             <div className={`h-11 w-11 rounded-full bg-[#181822] border-2 ${silver.border} flex items-center justify-center text-xs font-black text-white/90 shadow-lg transition-transform duration-300 group-hover:-translate-y-1.5`}>
               {silver.name.charAt(0).toUpperCase()}
@@ -71,7 +105,7 @@ export default function LeaderboardPodium() {
                 {silver.name}
               </div>
               <div className="text-[9px] font-black text-zinc-400/80">
-                {silver.hours} Hrs
+                {silver.hours}
               </div>
             </div>
             {/* Pillar */}
@@ -92,7 +126,7 @@ export default function LeaderboardPodium() {
             </div>
             {/* Watch Hours badge */}
             <span className="text-[8px] font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-1.5 py-0.5 rounded-full mb-1">
-              Top Watcher
+              {gold.points} Pts
             </span>
             <div className={`h-14 w-14 rounded-full bg-[#181822] border-2 ${gold.border} flex items-center justify-center text-sm font-black text-white ${gold.glow} transition-transform duration-300 group-hover:-translate-y-2`}>
               {gold.name.charAt(0).toUpperCase()}
@@ -103,7 +137,7 @@ export default function LeaderboardPodium() {
                 {gold.name}
               </div>
               <div className="text-[10px] font-black text-yellow-400">
-                {gold.hours} Hrs
+                {gold.hours}
               </div>
             </div>
             {/* Pillar */}
@@ -118,7 +152,7 @@ export default function LeaderboardPodium() {
           <div className="flex flex-col items-center flex-1 group">
             {/* Watch Hours badge */}
             <span className="text-[8px] font-bold text-orange-400/80 bg-orange-500/5 border border-orange-500/10 px-1.5 py-0.5 rounded-full mb-1">
-              Rank #3
+              {bronze.points} Pts
             </span>
             <div className={`h-10 w-10 rounded-full bg-[#181822] border-2 ${bronze.border} flex items-center justify-center text-xs font-black text-white/70 shadow-lg transition-transform duration-300 group-hover:-translate-y-1`}>
               {bronze.name.charAt(0).toUpperCase()}
@@ -129,7 +163,7 @@ export default function LeaderboardPodium() {
                 {bronze.name}
               </div>
               <div className="text-[9px] font-black text-orange-400/80">
-                {bronze.hours} Hrs
+                {bronze.hours}
               </div>
             </div>
             {/* Pillar */}
@@ -139,18 +173,6 @@ export default function LeaderboardPodium() {
           </div>
         )}
 
-      </div>
-
-      {/* Active User Watch Progress */}
-      <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-[11px] text-white/40">
-        <div className="flex items-center gap-1.5">
-          <span className="h-1.5 w-1.5 rounded-full bg-[#53FC18] animate-pulse" />
-          <span>Active Watcher</span>
-        </div>
-        <div className="flex items-center gap-3">
-          <span>Session: <strong className="text-white/60 font-mono">{formatSessionTime(sessionTime)}</strong></span>
-          <span>Points: <strong className="text-[#53FC18] font-mono">+{pointsEarned} XP</strong></span>
-        </div>
       </div>
     </div>
   );
