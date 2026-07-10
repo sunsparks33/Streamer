@@ -26,6 +26,9 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
   const [muted, setMuted] = useState(false);
   const [fullscreen, setFullscreen] = useState(false);
   const [showControls, setShowControls] = useState(true);
+  const [levels, setLevels] = useState([]);
+  const [currentLevel, setCurrentLevel] = useState(-1);
+  const [showQualityMenu, setShowQualityMenu] = useState(false);
 
   // Auto-hide controls when playing
   useEffect(() => {
@@ -62,6 +65,9 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
       setCurrentTime(0);
       setDuration(0);
       setShowControls(true);
+      setLevels([]);
+      setCurrentLevel(-1);
+      setShowQualityMenu(false);
 
       if (Hls.isSupported()) {
         const hls = new Hls();
@@ -70,7 +76,24 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
         hlsRef.current = hls;
         
         hls.on(Hls.Events.MANIFEST_PARSED, () => {
+          const hlsLevels = hls.levels.map((level, idx) => ({
+            index: idx,
+            name: level.name || `${level.height}p`,
+            height: level.height
+          }));
+          setLevels(hlsLevels);
+          setCurrentLevel(hls.currentLevel);
+
           video.play().catch(err => console.log("Autoplay blocked:", err));
+        });
+
+        // Sync when auto quality switches
+        hls.on(Hls.Events.LEVEL_SWITCHED, (event, data) => {
+          if (hls.autoLevelEnabled) {
+            setCurrentLevel(-1);
+          } else {
+            setCurrentLevel(data.level);
+          }
         });
       } else if (video.canPlayType("application/vnd.apple.mpegurl")) {
         // Safari fallback
@@ -175,6 +198,14 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
     document.addEventListener("fullscreenchange", handleFullscreenChange);
     return () => document.removeEventListener("fullscreenchange", handleFullscreenChange);
   }, []);
+
+  const handleQualityChange = (levelIdx) => {
+    if (hlsRef.current) {
+      hlsRef.current.currentLevel = levelIdx;
+      setCurrentLevel(levelIdx);
+    }
+    setShowQualityMenu(false);
+  };
 
   // VOD Active Player UI
   if (activeVOD) {
@@ -286,18 +317,60 @@ export default function KickPlayer({ isLive = false, activeVOD = null, onCloseVO
                   </div>
                 </div>
 
-                {/* Right actions: Fullscreen */}
-                <button onClick={toggleFullscreen} className="hover:text-rose-400 transition-colors">
-                  {fullscreen ? (
-                    <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
-                    </svg>
-                  ) : (
-                    <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
-                      <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
-                    </svg>
+                {/* Right actions: Quality & Fullscreen */}
+                <div className="flex items-center gap-3 relative" onClick={(e) => e.stopPropagation()}>
+                  {/* Quality Button */}
+                  {levels.length > 0 && (
+                    <div className="relative">
+                      <button 
+                        onClick={(e) => {
+                          e.stopPropagation();
+                          setShowQualityMenu(!showQualityMenu);
+                        }} 
+                        className="hover:text-rose-400 transition-all flex items-center gap-1 text-[10px] font-bold uppercase tracking-wider bg-black/40 hover:bg-black/60 px-2.5 py-1 rounded-lg border border-white/10"
+                      >
+                        <svg className="h-3.5 w-3.5 fill-current" viewBox="0 0 24 24">
+                          <path d="M19.43 12.98c.04-.32.07-.64.07-.98s-.03-.66-.07-.98l2.11-1.65c.19-.15.24-.42.12-.64l-2-3.46c-.12-.22-.39-.3-.61-.22l-2.49 1c-.52-.4-1.08-.73-1.69-.98l-.38-2.65C14.46 2.18 14.25 2 14 2h-4c-.25 0-.46.18-.49.42l-.38 2.65c-.61.25-1.17.59-1.69.98l-2.49-1c-.23-.09-.49 0-.61.22l-2 3.46c-.13.22-.07.49.12.64l2.11 1.65c-.04.32-.07.65-.07.98s.03.66.07.98l-2.11 1.65c-.19.15-.24.42-.12.64l2 3.46c.12.22.39.3.61.22l2.49-1c.52.4 1.08.73 1.69.98l.38 2.65c.03.24.24.42.49.42h4c.25 0 .46-.18.49-.42l.38-2.65c.61-.25 1.17-.59 1.69-.98l2.49 1c.23.09.49 0 .61-.22l2-3.46c.12-.22.07-.49-.12-.64l-2.11-1.65zM12 15.5c-1.93 0-3.5-1.57-3.5-3.5s1.57-3.5 3.5-3.5 3.5 1.57 3.5 3.5-1.57 3.5-3.5 3.5z" />
+                        </svg>
+                        <span>{currentLevel === -1 ? "Auto" : levels[currentLevel]?.name}</span>
+                      </button>
+
+                      {/* Dropdown Menu */}
+                      {showQualityMenu && (
+                        <div className="absolute bottom-full right-0 mb-2 w-28 bg-[#0e0e14]/95 backdrop-blur-md border border-white/10 rounded-xl p-1.5 flex flex-col gap-1 shadow-2xl z-30">
+                          <button
+                            onClick={() => handleQualityChange(-1)}
+                            className={`w-full text-left px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors ${currentLevel === -1 ? "bg-rose-600 text-white" : "text-white/60 hover:bg-white/[0.04] hover:text-white"}`}
+                          >
+                            Auto
+                          </button>
+                          {levels.map((level) => (
+                            <button
+                              key={level.index}
+                              onClick={() => handleQualityChange(level.index)}
+                              className={`w-full text-left px-2.5 py-1.5 text-[10px] font-bold uppercase tracking-wider rounded-lg transition-colors ${currentLevel === level.index ? "bg-rose-600 text-white" : "text-white/60 hover:bg-white/[0.04] hover:text-white"}`}
+                            >
+                              {level.name}
+                            </button>
+                          ))}
+                        </div>
+                      )}
+                    </div>
                   )}
-                </button>
+
+                  {/* Fullscreen Button */}
+                  <button onClick={toggleFullscreen} className="hover:text-rose-400 transition-colors">
+                    {fullscreen ? (
+                      <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M5 16h3v3h2v-5H5v2zm3-8H5v2h5V5H8v3zm6 11h2v-3h3v-2h-5v5zm2-11V5h-2v5h5V8h-3z" />
+                      </svg>
+                    ) : (
+                      <svg className="h-5 w-5 fill-current" viewBox="0 0 24 24">
+                        <path d="M7 14H5v5h5v-2H7v-3zm-2-4h2V7h3V5H5v5zm12 7h-3v2h5v-5h-2v3zM14 5v2h3v3h2V5h-5z" />
+                      </svg>
+                    )}
+                  </button>
+                </div>
               </div>
             </div>
 
