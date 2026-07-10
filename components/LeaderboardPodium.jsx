@@ -13,7 +13,7 @@ export default function LeaderboardPodium() {
   const [leaders, setLeaders] = useState(fallbackLeaders);
   const [loading, setLoading] = useState(true);
 
-  // Fetch real-time leaderboard data from our Next.js API endpoint proxy
+  // Fetch real-time leaderboard data from our Next.js API endpoint proxy every 30 seconds
   useEffect(() => {
     async function fetchLeaderboard() {
       try {
@@ -63,7 +63,12 @@ export default function LeaderboardPodium() {
         setLoading(false);
       }
     }
+
     fetchLeaderboard();
+
+    // Poll every 30 seconds for live updates
+    const interval = setInterval(fetchLeaderboard, 30000);
+    return () => clearInterval(interval);
   }, []);
 
   const gold = leaders.find(l => l.rank === 1);
