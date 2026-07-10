@@ -2,82 +2,39 @@
 
 import React, { useState, useEffect } from "react";
 
-export default function LeaderboardPodium({ alerts }) {
-  // Initial leaderboard state
+export default function LeaderboardPodium() {
+  // Top viewers watch time (loyalty leaderboard) state in hours
   const [leaders, setLeaders] = useState([
-    { name: "anass_rizk", amount: 150.00, rank: 1, color: "from-amber-400 via-yellow-500 to-amber-600", glow: "shadow-[0_0_25px_rgba(245,158,11,0.35)]", border: "border-amber-400/40" },
-    { name: "mouad_dev", amount: 100.00, rank: 2, color: "from-slate-300 via-zinc-400 to-slate-500", glow: "shadow-[0_0_20px_rgba(209,213,219,0.25)]", border: "border-slate-300/30" },
-    { name: "yassine_r", amount: 75.00, rank: 3, color: "from-orange-400 via-amber-700 to-orange-600", glow: "shadow-[0_0_15px_rgba(180,83,9,0.2)]", border: "border-orange-500/20" }
+    { name: "anass_rizk", hours: 152.5, rank: 1, color: "from-amber-400 via-yellow-500 to-amber-600", glow: "shadow-[0_0_25px_rgba(245,158,11,0.35)]", border: "border-amber-400/40" },
+    { name: "mouad_dev", hours: 118.2, rank: 2, color: "from-slate-300 via-zinc-400 to-slate-500", glow: "shadow-[0_0_20px_rgba(209,213,219,0.25)]", border: "border-slate-300/30" },
+    { name: "yassine_r", hours: 85.0, rank: 3, color: "from-orange-400 via-amber-700 to-orange-600", glow: "shadow-[0_0_15px_rgba(180,83,9,0.2)]", border: "border-orange-500/20" }
   ]);
 
-  // Listen to new donation alerts to automatically update the leaderboard in real-time!
+  // Session timer for the active viewer
+  const [sessionTime, setSessionTime] = useState(0);
+  const [pointsEarned, setPointsEarned] = useState(0);
+
   useEffect(() => {
-    if (alerts && alerts.length > 0) {
-      const latestAlert = alerts[alerts.length - 1];
-      if (latestAlert.type === "donation") {
-        const name = latestAlert.name.toLowerCase();
-        // Parse donation amount (e.g. "$50.00" -> 50.00)
-        const amountNum = parseFloat(latestAlert.details.replace(/[^0-9.]/g, "")) || 0;
-        
-        if (amountNum > 0) {
-          setLeaders(prev => {
-            let updated = [...prev];
-            const existingIdx = updated.findIndex(l => l.name.toLowerCase() === name);
-
-            if (existingIdx !== -1) {
-              // Add to existing amount
-              updated[existingIdx].amount += amountNum;
-            } else {
-              // Add new user if they beat the 3rd rank wla we can just rank them
-              updated.push({
-                name,
-                amount: amountNum,
-                rank: 4, // temporary rank
-                color: "",
-                glow: "",
-                border: ""
-              });
-            }
-
-            // Sort by amount descending
-            updated.sort((a, b) => b.amount - a.amount);
-
-            // Re-assign ranks and styles for top 3
-            return updated.slice(0, 3).map((item, idx) => {
-              const rank = idx + 1;
-              let color = "";
-              let glow = "";
-              let border = "";
-
-              if (rank === 1) {
-                color = "from-amber-400 via-yellow-500 to-amber-600";
-                glow = "shadow-[0_0_25px_rgba(245,158,11,0.4)]";
-                border = "border-amber-400/50";
-              } else if (rank === 2) {
-                color = "from-slate-300 via-zinc-400 to-slate-500";
-                glow = "shadow-[0_0_20px_rgba(209,213,219,0.3)]";
-                border = "border-slate-300/40";
-              } else {
-                color = "from-orange-400 via-amber-700 to-orange-600";
-                glow = "shadow-[0_0_15px_rgba(180,83,9,0.25)]";
-                border = "border-orange-500/30";
-              }
-
-              return {
-                ...item,
-                rank,
-                color,
-                glow,
-                border
-              };
-            });
-          });
+    const timer = setInterval(() => {
+      setSessionTime(prev => {
+        const nextTime = prev + 1;
+        // Earn 1 Loyalty Point every 10 seconds of active watching!
+        if (nextTime % 10 === 0) {
+          setPointsEarned(p => p + 1);
         }
-      }
-    }
-  }, [alerts]);
+        return nextTime;
+      });
+    }, 1000);
 
-  // Find users for layout placement
+    return () => clearInterval(timer);
+  }, []);
+
+  const formatSessionTime = (secs) => {
+    const mins = Math.floor(secs / 60);
+    const s = secs % 60;
+    return `${mins}m ${s < 10 ? "0" : ""}${s}s`;
+  };
+
   const gold = leaders.find(l => l.rank === 1);
   const silver = leaders.find(l => l.rank === 2);
   const bronze = leaders.find(l => l.rank === 3);
@@ -87,31 +44,34 @@ export default function LeaderboardPodium({ alerts }) {
       {/* Header */}
       <div className="flex items-center justify-between pb-3 border-b border-white/[0.04]">
         <div className="flex items-center gap-2.5">
-          <div className="h-5 w-1 rounded-full bg-yellow-500" />
-          <h2 className="text-sm font-bold text-white tracking-tight uppercase">Top Supporters</h2>
+          <div className="h-5 w-1 rounded-full bg-rose-600" />
+          <h2 className="text-sm font-bold text-white tracking-tight uppercase">Top Viewers (Watch Time)</h2>
         </div>
-        <span className="text-[9px] font-black bg-yellow-500/10 border border-yellow-500/20 text-yellow-500 px-2 py-0.5 rounded-full uppercase tracking-wider animate-pulse">
-          Automatic Live Feed
+        <span className="text-[9px] font-black bg-rose-500/10 border border-rose-500/20 text-rose-500 px-2.5 py-0.5 rounded-full uppercase tracking-wider">
+          Loyalty Leaderboard
         </span>
       </div>
 
-      {/* Podium Container */}
-      <div className="flex items-end justify-center gap-4 pt-10 pb-2 max-w-sm mx-auto">
+      {/* Podium Grid */}
+      <div className="flex items-end justify-center gap-4 pt-8 pb-1 max-w-sm mx-auto">
         
         {/* 2nd Place - Silver */}
         {silver && (
           <div className="flex flex-col items-center flex-1 group">
-            {/* User Avatar wla Initial letter */}
+            {/* Watch Hours badge */}
+            <span className="text-[8px] font-bold text-zinc-400 bg-white/5 border border-white/10 px-1.5 py-0.5 rounded-full mb-1">
+              Rank #2
+            </span>
             <div className={`h-11 w-11 rounded-full bg-[#181822] border-2 ${silver.border} flex items-center justify-center text-xs font-black text-white/90 shadow-lg transition-transform duration-300 group-hover:-translate-y-1.5`}>
               {silver.name.charAt(0).toUpperCase()}
             </div>
-            {/* Name & Amount */}
-            <div className="text-center mt-2.5 space-y-0.5">
+            {/* Name & Hours */}
+            <div className="text-center mt-2 space-y-0.5">
               <div className="text-[10px] font-bold text-white/80 truncate max-w-[80px]" title={silver.name}>
                 {silver.name}
               </div>
-              <div className="text-[9px] font-black text-zinc-400">
-                ${silver.amount.toFixed(2)}
+              <div className="text-[9px] font-black text-zinc-400/80">
+                {silver.hours} Hrs
               </div>
             </div>
             {/* Pillar */}
@@ -130,17 +90,20 @@ export default function LeaderboardPodium({ alerts }) {
                 <path d="M12 2l3.09 6.26L22 9.27l-5 4.87 1.18 6.88L12 17.77l-6.18 3.25L7 14.14 2 9.27l6.91-1.01L12 2z" />
               </svg>
             </div>
-            {/* User Avatar */}
+            {/* Watch Hours badge */}
+            <span className="text-[8px] font-bold text-yellow-400 bg-yellow-500/10 border border-yellow-500/20 px-1.5 py-0.5 rounded-full mb-1">
+              Top Watcher
+            </span>
             <div className={`h-14 w-14 rounded-full bg-[#181822] border-2 ${gold.border} flex items-center justify-center text-sm font-black text-white ${gold.glow} transition-transform duration-300 group-hover:-translate-y-2`}>
               {gold.name.charAt(0).toUpperCase()}
             </div>
-            {/* Name & Amount */}
-            <div className="text-center mt-2.5 space-y-0.5">
+            {/* Name & Hours */}
+            <div className="text-center mt-2 space-y-0.5">
               <div className="text-[11px] font-black text-white truncate max-w-[90px]" title={gold.name}>
                 {gold.name}
               </div>
               <div className="text-[10px] font-black text-yellow-400">
-                ${gold.amount.toFixed(2)}
+                {gold.hours} Hrs
               </div>
             </div>
             {/* Pillar */}
@@ -153,17 +116,20 @@ export default function LeaderboardPodium({ alerts }) {
         {/* 3rd Place - Bronze */}
         {bronze && (
           <div className="flex flex-col items-center flex-1 group">
-            {/* User Avatar */}
+            {/* Watch Hours badge */}
+            <span className="text-[8px] font-bold text-orange-400/80 bg-orange-500/5 border border-orange-500/10 px-1.5 py-0.5 rounded-full mb-1">
+              Rank #3
+            </span>
             <div className={`h-10 w-10 rounded-full bg-[#181822] border-2 ${bronze.border} flex items-center justify-center text-xs font-black text-white/70 shadow-lg transition-transform duration-300 group-hover:-translate-y-1`}>
               {bronze.name.charAt(0).toUpperCase()}
             </div>
-            {/* Name & Amount */}
-            <div className="text-center mt-2.5 space-y-0.5">
+            {/* Name & Hours */}
+            <div className="text-center mt-2 space-y-0.5">
               <div className="text-[10px] font-bold text-white/70 truncate max-w-[80px]" title={bronze.name}>
                 {bronze.name}
               </div>
               <div className="text-[9px] font-black text-orange-400/80">
-                ${bronze.amount.toFixed(2)}
+                {bronze.hours} Hrs
               </div>
             </div>
             {/* Pillar */}
@@ -173,6 +139,18 @@ export default function LeaderboardPodium({ alerts }) {
           </div>
         )}
 
+      </div>
+
+      {/* Active User Watch Progress */}
+      <div className="pt-3 border-t border-white/[0.04] flex items-center justify-between text-[11px] text-white/40">
+        <div className="flex items-center gap-1.5">
+          <span className="h-1.5 w-1.5 rounded-full bg-[#53FC18] animate-pulse" />
+          <span>Active Watcher</span>
+        </div>
+        <div className="flex items-center gap-3">
+          <span>Session: <strong className="text-white/60 font-mono">{formatSessionTime(sessionTime)}</strong></span>
+          <span>Points: <strong className="text-[#53FC18] font-mono">+{pointsEarned} XP</strong></span>
+        </div>
       </div>
     </div>
   );

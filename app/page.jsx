@@ -356,8 +356,8 @@ export default function Home() {
               donationGoal={100}
             />
 
-            {/* Top Supporters Leaderboard */}
-            <LeaderboardPodium alerts={alerts} />
+            {/* Watch Time Leaderboard */}
+            <LeaderboardPodium />
 
             {/* Followers Section */}
             <FollowersSection
