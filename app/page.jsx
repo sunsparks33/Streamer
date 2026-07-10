@@ -13,6 +13,7 @@ import StreamMusic from "@/components/StreamMusic";
 import DiscordWidget from "@/components/DiscordWidget";
 import LiveTicker from "@/components/LiveTicker";
 import MtaCharacterCard from "@/components/MtaCharacterCard";
+import LeaderboardPodium from "@/components/LeaderboardPodium";
 
 /* ─── Helpers ──────────────────────────────────────────────────────── */
 function formatDuration(ms) {
@@ -354,6 +355,9 @@ export default function Home() {
               currentDonation={currentDonation}
               donationGoal={100}
             />
+
+            {/* Top Supporters Leaderboard */}
+            <LeaderboardPodium alerts={alerts} />
 
             {/* Followers Section */}
             <FollowersSection
